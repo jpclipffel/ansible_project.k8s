@@ -1,0 +1,4 @@
+- src: git+https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/
+  version: master
+  name: common
+  scm: git
