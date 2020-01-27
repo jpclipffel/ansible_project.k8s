@@ -1,5 +1,4 @@
 - hosts:
     - all
   roles:
-    - common/docker_base
     - common/k8s_base
