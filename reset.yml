@@ -1,0 +1,6 @@
+- hosts:
+    - all
+  tasks:
+    - import_role:
+        name: common/k8s_base
+        tasks_from: reset
