@@ -2,7 +2,7 @@
     - all
 
   tasks:
-  
+
     - import_role:
         name: "{{ k8s_deploy_rolename }}"
       when:

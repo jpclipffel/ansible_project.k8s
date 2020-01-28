@@ -1,0 +1,24 @@
+- hosts:
+    - all
+  
+  tasks:
+
+    - name: Copy definition
+      copy:
+        src: "./{{ definition }}.yml"
+        dest: "/tmp/__defnition.yml"
+      tags:
+        - deploy
+
+    - name: Apply definition
+      shell: >
+        kubectl apply -f /tmp/__definition.yml
+      tags:
+        - deploy
+
+    - name: Remove definition source
+      file:
+        path: /tmp/__definition.yml
+        state: absent
+      tags:
+        - deploy
