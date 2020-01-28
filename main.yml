@@ -13,16 +13,12 @@
 
     - import_role:
         name: common/docker_base
-      tags:
-        - always
-
+  
     # --- Create and scale K8S cluster ---
     # Tags: install, configure, bootstrap_master, bootstrap_worker, reset
 
     - import_role:
         name: common/k8s_base
-      tags:
-        - always
 
 
     # --- Extract environment information ---
@@ -33,7 +29,7 @@
       when:
         - k8s_base_node_type | default("") == "master"
       tags:
-        - always
+        - deploy
 
 
     # --- Apply (deploy) K8S cluster ---
@@ -122,6 +118,7 @@
         - delete
 
     - tempfile:
+        path: "{{ definitions.path }}"
         state: absent
       run_once: yes
       when:
