@@ -23,7 +23,7 @@
       k8s:
         kubeconfig: "{{ become_user | default(ansible_user) }}/.kube/admin.conf"
         state: present
-        resource_definition: "{{ lookup('file', './calico.yml') }}"
+        definition: "{{ lookup('file', './calico.yml') | from_yaml }}"
       run_once: yes
       when:
         - k8s_base_node_type | default("") == "master"
