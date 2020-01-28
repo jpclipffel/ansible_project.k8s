@@ -74,7 +74,7 @@
 
     - name: Delete definitions
       shell: >
-        kubectl apply -f {{ definitions.path }}/{{ item }}
+        kubectl delete -f {{ definitions.path }}/{{ item }}
       environment:
         KUBECONFIG: "{{ user_home.stdout }}/.kube/admin.conf"
       with_items:
@@ -86,11 +86,13 @@
         - delete
 
     - name: Clean temporary files
-      tempfile:
+      file:
+        path: "{{ definitions.path }}"
         state: absent
       run_once: yes
       when:
         - k8s_base_node_type | default("") == "master"
+        - definitions.path is defined
       tags:
         - apply
         - delete
