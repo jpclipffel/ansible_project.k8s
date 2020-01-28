@@ -1,13 +1,18 @@
-- import_role:
-    name: "{{ k8s_deploy_rolename }}"
-  when:
-    - k8s_base_node_type | default("") == "master"
-  tags:
-    - deploy
+- hosts:
+    - all
 
-- import_role:
-    name: "{{ k8s_deploy_rolename }}"
-  when:
-    - k8s_base_node_type | default("") == "master"
-  tags:
-    - remove
+  tasks:
+  
+    - import_role:
+        name: "{{ k8s_deploy_rolename }}"
+      when:
+        - k8s_base_node_type | default("") == "master"
+      tags:
+        - deploy
+
+    - import_role:
+        name: "{{ k8s_deploy_rolename }}"
+      when:
+        - k8s_base_node_type | default("") == "master"
+      tags:
+        - remove
