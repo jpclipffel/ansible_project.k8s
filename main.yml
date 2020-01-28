@@ -21,7 +21,7 @@
 
     - name: Deploy Calico
       k8s:
-        kubeconfig: "{{ become_user | defaults(ansible_user) }}/.kube/admin.conf"
+        kubeconfig: "{{ become_user | default(ansible_user) }}/.kube/admin.conf"
         state: present
         resource_definition: "{{ lookup('file', './calico.yml') }}"
       run_once: yes
