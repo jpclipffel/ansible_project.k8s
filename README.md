@@ -6,8 +6,8 @@ Deploy and maintains the AWXLab Kubernetes infrastructure.
 
 |Playbook|Description|Roles|
 |--------|-----------|-----|
-|`install.yml`|Deploy and maintain the K8S infrastructure|[docker_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/docker_base)<br>[k8s_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)|
-|`k8s_deploy_role`|Deploy a Kubernetes definition through an Ansible *role*|Common roles referenced as `common/<role_name>`, local as `<role_name>`|
+|`main.yml`|Deploy and maintain the K8S infrastructure|[docker_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/docker_base)<br>[k8s_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)|
+|`k8s_deploy_role`|Deploy or remove a Kubernetes definition through an Ansible *role*|Common roles referenced as `common/<role_name>`, local as `<role_name>`|
 |`reset`|Reset the Kubernetes infrastructure|[k8s_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)|
 
 ## Usage

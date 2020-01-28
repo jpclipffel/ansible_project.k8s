@@ -1,2 +1,9 @@
 - import_role:
     name: "{{ k8s_deploy_rolename }}"
+  tags:
+    - deploy
+
+- import_role:
+    name: "{{ k8s_deploy_rolename }}"
+  tags:
+    - remove
