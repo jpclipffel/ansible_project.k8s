@@ -1,5 +1,33 @@
 - hosts:
     - all
-  roles:
-    - common/docker_base
-    - common/k8s_base
+
+  tasks:
+    # Prepare K8S cluster
+    - import_role:
+        name: common/docker_base
+
+    # Create and scale K8S cluster
+    - import_role:
+        name: common/k8s_base
+
+    # Manages K8S cluster
+    - name: Deploy Calico
+      k8s:
+        resource_definition: "{{ lookup('file', './calico.yml') }}"
+      run_once: yes
+      when:
+        - - k8s_base_node_type | default("") == "master"
+      tags:
+        - deploy
+
+    # - name: Deploy Istio
+    #   k8s:
+    #     resource_definition: "{{ lookup('file', './calico.yml') }}"
+    #   tags:
+    #     - deploy
+
+    # - name: Deploy KNative
+    #   k8s:
+    #     resource_definition: "{{ lookup('file', './calico.yml') }}"
+    #   tags:
+    #     - deploy

@@ -2,19 +2,34 @@
 
 Deploy and maintains the AWXLab Kubernetes infrastructure.
 
-## Playbooks
+## Run
 
 |Playbook|Description|Roles|
 |--------|-----------|-----|
 |`main.yml`|Deploy and maintain the K8S infrastructure|[docker_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/docker_base)<br>[k8s_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)|
-|`k8s_deploy_role`|Deploy or remove a Kubernetes definition through an Ansible *role*|Common roles referenced as `common/<role_name>`, local as `<role_name>`|
+|`definition.yml`|Deploy or remove a Kubernetes definition|-|
 |`reset`|Reset the Kubernetes infrastructure|[k8s_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)|
+
+## Playbooks
+
+### `main.yml`
+
+|Tags|Description|
+|----|-----------|
+|`bootstrap_master`|Bootstrap the master(s) node(s) (with `k8s_base_node_type` set on `master`)<br>**Warning**: Node(s) will be reseted|
+|`bootstrap_worker`|Bootstrap the worker(s) node(s) (with `k8s_base_node_type` set on `worker`)<br>**Warning**: Node(s) will be reseted|
+
+### `definition.yml`
+
+|Tags|Description|
+|----|-----------|
+|`deploy`|Deploy the given `definition` (variable).<br>Definitions files are searched in `roles/*.yml` and `files/*.yml`<br>Example: `definition: "calico"` will target `files/calico.yml`|
 
 ## Usage
 
 ### Ansible Tower
 
-* Create a new project using **Git** as a SCM
+* Create a new **project** using **Git** as a SCM
 * Provide the following configuration:
 
 |Key|Value|
