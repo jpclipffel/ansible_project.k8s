@@ -20,6 +20,9 @@
     # Tags: apply, delete
     - import_role:
         name: common/k8s_mesh
+      run_once: yes
+      when:
+        - k8s_base_node_type | default("") == "master"
 
 
 
