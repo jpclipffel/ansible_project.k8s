@@ -3,16 +3,26 @@
   
   tasks:
 
+
+
     - name: Copy definition
       copy:
         src: "./{{ definition }}.yml"
         dest: "/tmp/__defnition.yml"
+      run_once: yes
+      when:
+        - k8s_base_node_type | default("") == "master"
       tags:
         - deploy
 
     - name: Apply definition
       shell: >
         kubectl apply -f /tmp/__definition.yml
+      environment:
+        KUBECONFIG: "/root/.kube/admin.conf"
+      run_once: yes
+      when:
+        - k8s_base_node_type | default("") == "master"
       tags:
         - deploy
 
@@ -20,5 +30,8 @@
       file:
         path: /tmp/__definition.yml
         state: absent
+      run_once: yes
+      when:
+        - k8s_base_node_type | default("") == "master"
       tags:
         - deploy
