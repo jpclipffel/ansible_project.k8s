@@ -8,7 +8,7 @@
     - name: Copy definition
       copy:
         src: "./{{ definition }}.yml"
-        dest: "/tmp/__defnition.yml"
+        dest: "/tmp/__definition.yml"
       run_once: yes
       when:
         - k8s_base_node_type | default("") == "master"
