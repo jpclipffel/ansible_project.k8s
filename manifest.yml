@@ -20,14 +20,6 @@
         - manifest is not defined or manifest | length < 1
       tags:
         - always
-  
-    - fail:
-        msg: "Variable 'props' is not defined"
-      run_once: yes
-      when:
-        - props is not defined
-      tags:
-        - always
 
     # ---
 

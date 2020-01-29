@@ -5,16 +5,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world
+  name: "{{ service_name }}"
 spec:
   selector:
     matchLabels:
-      run: load-balancer-example
+      run: "{{ service_name }}"
   replicas: 2
   template:
     metadata:
       labels:
-        run: load-balancer-example
+        run: "{{ service_name }}"
     spec:
       containers:
         - name: hello-world
@@ -27,12 +27,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: example-service
+  name: "{{ service_name }}-service"
 spec:
   selector:
-    run: load-balancer-example
+    run: "{{ service_name }}"
   type: NodePort
   ports:
     - port: 8080
-      nodePort: {{ props.nodePort }}
+      nodePort: {{ service_port }}
       protocol: TCP
