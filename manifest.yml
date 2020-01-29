@@ -10,7 +10,6 @@
       run_once: yes
       when:
         - kubeconfig is not defined or kubeconfig | length < 1
-        - k8s_base_node_type | default("") == "master"
       tags:
         - always
   
@@ -19,7 +18,6 @@
       run_once: yes
       when:
         - manifest is not defined or manifest | length < 1
-        - k8s_base_node_type | default("") == "master"
       tags:
         - always
   
@@ -28,7 +26,6 @@
       run_once: yes
       when:
         - props is not defined
-        - k8s_base_node_type | default("") == "master"
       tags:
         - always
 
@@ -36,7 +33,7 @@
 
     - tempfile:
         state: file
-      register: manifest
+      register: _manifest
       run_once: yes
       when:
         - k8s_base_node_type | default("") == "master"
@@ -46,7 +43,7 @@
 
     - template:
         src: "{{ manifest }}"
-        dest: "{{ manifest.path }}"
+        dest: "{{ _manifest.path }}"
       run_once: yes
       when:
         - k8s_base_node_type | default("") == "master"
@@ -58,7 +55,7 @@
 
     - name: Apply
       shell: >
-        kubectl apply -f {{ manifest.path }}
+        kubectl apply -f {{ _manifest.path }}
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
       run_once: yes
@@ -69,7 +66,7 @@
 
     - name: Delete
       shell: >
-        kubectl delete -f {{ manifest.path }}
+        kubectl delete -f {{ _manifest.path }}
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
       run_once: yes
