@@ -1,0 +1,61 @@
+- hosts:
+    - all
+
+  tasks:
+
+    # ---
+
+    - fail:
+        msg: "Variable 'kubeconfig' is not defined or empty"
+      when:
+        - kubeconfig is not defined or kubeconfig | length < 1
+      tags:
+        - always
+  
+    - fail:
+        msg: "Variable 'manifest' is not defined or empty"
+      when:
+        - manifest is not defined or manifest | length < 1
+      tags:
+        - always
+  
+    - fail:
+        msg: "Variable 'props' is not defined"
+      when:
+        - props is not defined
+      tags:
+        - always
+
+    # ---
+
+    - tempfile:
+        state: file
+      register: manifest
+      tags:
+        - apply
+        - delete
+
+    - template:
+        src: "{{ manifest }}"
+        dest: "{{ manifest.path }}"
+      tags:
+        - apply
+        - delete
+
+    # ---
+
+    - name: Apply
+      shell: >
+        kubectl apply -f {{ manifest.path }}
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+      tags:
+        - apply
+
+    - name: Delete
+      shell: >
+        kubectl delete -f {{ manifest.path }}
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+      tags:
+        - delete
