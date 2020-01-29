@@ -7,22 +7,28 @@
 
     - fail:
         msg: "Variable 'kubeconfig' is not defined or empty"
+      run_once: yes
       when:
         - kubeconfig is not defined or kubeconfig | length < 1
+        - k8s_base_node_type | default("") == "master"
       tags:
         - always
   
     - fail:
         msg: "Variable 'manifest' is not defined or empty"
+      run_once: yes
       when:
         - manifest is not defined or manifest | length < 1
+        - k8s_base_node_type | default("") == "master"
       tags:
         - always
   
     - fail:
         msg: "Variable 'props' is not defined"
+      run_once: yes
       when:
         - props is not defined
+        - k8s_base_node_type | default("") == "master"
       tags:
         - always
 
