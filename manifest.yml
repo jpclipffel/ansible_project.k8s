@@ -31,6 +31,9 @@
     - tempfile:
         state: file
       register: manifest
+      run_once: yes
+      when:
+        - k8s_base_node_type | default("") == "master"
       tags:
         - apply
         - delete
@@ -38,6 +41,9 @@
     - template:
         src: "{{ manifest }}"
         dest: "{{ manifest.path }}"
+      run_once: yes
+      when:
+        - k8s_base_node_type | default("") == "master"
       tags:
         - apply
         - delete
@@ -49,6 +55,9 @@
         kubectl apply -f {{ manifest.path }}
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
+      run_once: yes
+      when:
+        - k8s_base_node_type | default("") == "master"
       tags:
         - apply
 
@@ -57,5 +66,8 @@
         kubectl delete -f {{ manifest.path }}
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
+      run_once: yes
+      when:
+        - k8s_base_node_type | default("") == "master"
       tags:
         - delete
