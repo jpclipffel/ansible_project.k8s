@@ -34,5 +34,5 @@ spec:
   type: NodePort
   ports:
     - port: 8080
-      nodePort: "{{ props.nodePort }}"
+      nodePort: {{ props.nodePort }}
       protocol: TCP
