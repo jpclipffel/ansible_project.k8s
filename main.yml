@@ -2,6 +2,8 @@
     - name: Assertions
       include_tasks:
         file: assert.yml
+      tags:
+        - always
 
     - name: Configure hosts
       import_role:
