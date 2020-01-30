@@ -1,4 +1,5 @@
-- tasks:
+- hosts:
+  tasks:
     - name: Assertions
       include_tasks:
         file: assert.yml
