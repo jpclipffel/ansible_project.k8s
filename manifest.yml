@@ -8,6 +8,8 @@
     - name: Assertions
       include_tasks:
         file: assert.yml
+      tags:
+        - always
   
     - name: Assertions
       fail:
