@@ -2,11 +2,26 @@
     - all
 
   tasks:
+
+    - shell: >
+        getent passwd {{ ansible_user_id }} | awk -F: '{ print $6 }'
+      register: user_home
+
+    - name: Find kubeconfig
+      set_fact:
+        kubeconfig: "{{ user_home.stdout }}/.kube/admin.conf"
+      when:
+        - kubeconfig is not defined or kubeconfig | length < 1
+
+    # ---
+
     - name: Assertions
       include_tasks:
         file: assert.yml
       tags:
         - always
+
+    # ---
 
     - name: Configure hosts
       include_role:
@@ -22,6 +37,7 @@
       vars:
         k8s_base_node_type: "{{ facted.kubernetes.role }}"
         k8s_base_kubeconfig: "{{ kubeconfig }}"
+        k8s_base_control_plane_endpoint: "{{ control_plane_endpoint }}"
       tags:
         - install
         - configure
