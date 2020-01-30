@@ -12,9 +12,11 @@
     - name: Assertions (project)
       include_tasks:
         file: assert.yml
+      vars:
+        control_plane_endpoint: "-"
       tags:
         - always
-  
+
     - name: Assertions (playbook)
       fail:
         msg: >
