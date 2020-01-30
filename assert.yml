@@ -1,9 +1,9 @@
 - fail:
     msg: >
-      Undefined or empty variable 'facted.kubernetes.roles'
-      facted.kubernetes.roles: {{ facted.kubernetes.roles | default('not defined') }}
+      Undefined or empty variable 'facted.kubernetes.role'
+      facted.kubernetes.role: {{ facted.kubernetes.role | default('not defined') }}
   when:
-    - facted.kubernetes.roles is not defined
+    - facted.kubernetes.role is not defined
   tags:
     - always
 

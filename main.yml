@@ -1,11 +1,7 @@
 - tasks:
-
-    # --- Assertions ---
-
-    - include_tasks:
+    - name: Assertions
+      include_tasks:
         file: assert.yml
-
-    # --- Run ---
 
     - name: Configure hosts
       import_role:
@@ -18,6 +14,9 @@
     - name: Configure cluster
       import_role:
         name: common/k8s_base
+      vars:
+        k8s_base_node_type: "{{ facted.kubernetes.roles }}"
+        k8s_base_kubeconfig: "{{ kubeconfig }}"
       tags:
         - install
         - configure
@@ -28,10 +27,11 @@
     - name: Configure service mesh
       import_role:
         name: common/k8s_mesh
+      vars:
+        k8s_mesh_kubeconfig: "{{ kubeconfig }}"
       run_once: yes
       when:
-        # - facted.kubernetes.roles is defined
-        - facted.kubernetes.roles == master
+        - facted.kubernetes.role == master
       tags:
         - apply
         - delete
