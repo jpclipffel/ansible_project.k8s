@@ -1,6 +1,10 @@
 - hosts:
     - all
+
   tasks:
-    - import_role:
+    - include_role:
         name: common/k8s_base
         tasks_from: reset
+      vars:
+        k8s_base_node_type: "{{ facted.kubernetes.role }}"
+        k8s_base_kubeconfig: "{{ kubeconfig }}"

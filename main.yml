@@ -9,7 +9,7 @@
         - always
 
     - name: Configure hosts
-      import_role:
+      include_role:
         name: common/docker_base
       tags:
         - install
@@ -17,7 +17,7 @@
         - reset
 
     - name: Configure cluster
-      import_role:
+      include_role:
         name: common/k8s_base
       vars:
         k8s_base_node_type: "{{ facted.kubernetes.role }}"
@@ -30,7 +30,7 @@
         - reset
 
     - name: Configure service mesh
-      import_role:
+      include_role:
         name: common/k8s_mesh
       vars:
         k8s_mesh_kubeconfig: "{{ kubeconfig }}"
