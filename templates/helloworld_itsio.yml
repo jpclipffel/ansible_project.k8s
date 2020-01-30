@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ service_name }}"
+spec:
+  selector:
+    matchLabels:
+      run: "{{ service_name }}"
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: "{{ service_name }}"
+    spec:
+      containers:
+        - name: hello-world
+          image: gcr.io/google-samples/node-hello:1.0
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ service_name }}"
+spec:
+  selector:
+    run: "{{ service_name }}"
+  type: ClusterIP
+  ports:
+    - port: {{ service_port }}
+      targetPort: 8080
+      protocol: TCP
