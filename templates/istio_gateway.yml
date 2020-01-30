@@ -6,9 +6,9 @@ spec:
   selector:
     istio: ingressgateway
 servers:
-  hosts:
-    - {{ gateway_host }}
   - port:
       number: 80
       name: http
       protocol: HTTP
+    hosts:
+      - {{ gateway_host }}
