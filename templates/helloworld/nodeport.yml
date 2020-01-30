@@ -24,7 +24,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ service_name }}-service"
+  name: "{{ service_name }}"
 spec:
   selector:
     run: "{{ service_name }}"
