@@ -5,7 +5,7 @@ metadata:
 spec:
   gateways:
     - "{{ gateway_name }}"
-    - mesh
+    # - mesh
   hosts:
     - "{{ gateway_host }}"
   http:
