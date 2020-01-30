@@ -20,7 +20,7 @@
       import_role:
         name: common/k8s_base
       vars:
-        k8s_base_node_type: "{{ facted.kubernetes.roles }}"
+        k8s_base_node_type: "{{ facted.kubernetes.role }}"
         k8s_base_kubeconfig: "{{ kubeconfig }}"
       tags:
         - install
