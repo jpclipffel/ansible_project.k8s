@@ -11,4 +11,4 @@ spec:
   http:
     - route:
       - destination:
-          host: "{{ gateway_host }}"
+          host: "{{ service_name }}"
