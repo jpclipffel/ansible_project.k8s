@@ -1,34 +1,29 @@
-- hosts:
-    - all
+- tasks:
 
-  tasks:
-
-    # ---
-
-    - fail:
-        msg: "Variable 'kubeconfig' is not defined or empty"
-      run_once: yes
-      when:
-        - kubeconfig is not defined or kubeconfig | length < 1
-      tags:
-        - always
+    # --- Assertions ---
+    
+    - include_tasks:
+        file: assert.yml
   
     - fail:
-        msg: "Variable 'manifest' is not defined or empty"
+        msg: >
+          Undefined or empty variable 'manifest'
+          manifest: {{ manifest | default('not defined') }}
       run_once: yes
       when:
         - manifest is not defined or manifest | length < 1
       tags:
         - always
 
-    # ---
+    # --- Run ---
 
     - tempfile:
         state: file
       register: _manifest
       run_once: yes
-      when:
-        - k8s_base_node_type | default("") == "master"
+      # when:
+      #   - facted.kubernetes.roles is defined
+      #   - facted.kubernetes.roles == master
       tags:
         - apply
         - delete
@@ -37,8 +32,9 @@
         src: "{{ manifest }}"
         dest: "{{ _manifest.path }}"
       run_once: yes
-      when:
-        - k8s_base_node_type | default("") == "master"
+      # when:
+      #   - facted.kubernetes.roles is defined
+      #   - facted.kubernetes.roles == master
       tags:
         - apply
         - delete
@@ -51,8 +47,9 @@
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
       run_once: yes
-      when:
-        - k8s_base_node_type | default("") == "master"
+      # when:
+      #   - facted.kubernetes.roles is defined
+      #   - facted.kubernetes.roles == master
       tags:
         - apply
 
@@ -62,7 +59,8 @@
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
       run_once: yes
-      when:
-        - k8s_base_node_type | default("") == "master"
+      # when:
+      #   - facted.kubernetes.roles is defined
+      #   - facted.kubernetes.roles == master
       tags:
         - delete

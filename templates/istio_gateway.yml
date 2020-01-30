@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: istio-{{ gateway_name }}
+  name: {{ gateway_name }}
 spec:
   selector:
     istio: ingressgateway
@@ -11,4 +11,4 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "{{ gateway_host }}"
+        - {{ gateway_host }}

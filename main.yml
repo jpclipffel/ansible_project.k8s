@@ -1,7 +1,11 @@
-- hosts:
-    - all
+- tasks:
 
-  tasks:
+    # --- Assertions ---
+
+    - include_tasks:
+        file: assert.yml
+
+    # --- Run ---
 
     - name: Configure hosts
       import_role:
@@ -26,7 +30,7 @@
         name: common/k8s_mesh
       run_once: yes
       when:
-        - facted.kubernetes.roles is defined
+        # - facted.kubernetes.roles is defined
         - facted.kubernetes.roles == master
       tags:
         - apply

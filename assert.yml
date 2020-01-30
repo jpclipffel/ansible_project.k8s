@@ -1,0 +1,18 @@
+- fail:
+    msg: >
+      Undefined or empty variable 'facted.kubernetes.roles'
+      facted.kubernetes.roles: {{ facted.kubernetes.roles | default('not defined') }}
+  when:
+    - facted.kubernetes.roles is not defined
+  tags:
+    - always
+
+- fail:
+    msg: >
+      Undefined or empty variable 'kubeconfig'
+      kubeconfig: {{ kubeconfig | default('not defined') }}
+  run_once: yes
+  when:
+    - kubeconfig is not defined or kubeconfig | length < 1
+  tags:
+    - always
