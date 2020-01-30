@@ -9,6 +9,8 @@
       tags:
         - always
 
+    # ---
+
     - name: Assertions (project)
       include_tasks:
         file: assert.yml
@@ -17,7 +19,7 @@
       tags:
         - always
 
-    - name: Assertions (playbook)
+    - name: Manifest assertions
       fail:
         msg: >
           Undefined or empty variable 'manifest'
@@ -25,6 +27,16 @@
       run_once: yes
       when:
         - manifest is not defined or manifest | length < 1
+      tags:
+        - always
+
+    - name: Tags assertion
+      fail:
+        msg: >
+          Cannot specify both 'apply' and 'delete' in tags
+      when:
+        - "'apply' in ansible_run_tags"
+        - "'delete' in ansible_run_tags"
       tags:
         - always
 
