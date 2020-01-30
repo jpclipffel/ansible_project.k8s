@@ -31,7 +31,7 @@
         k8s_mesh_kubeconfig: "{{ kubeconfig }}"
       run_once: yes
       when:
-        - facted.kubernetes.role == master
+        - facted.kubernetes.role == "master"
       tags:
         - apply
         - delete
