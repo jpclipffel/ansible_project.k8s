@@ -1,11 +1,16 @@
-- tasks:
+- hosts:
+    - all
+
+  tasks:
 
     # --- Assertions ---
     
-    - include_tasks:
+    - name: Assertions
+      include_tasks:
         file: assert.yml
   
-    - fail:
+    - name: Assertions
+      fail:
         msg: >
           Undefined or empty variable 'manifest'
           manifest: {{ manifest | default('not defined') }}
@@ -39,7 +44,7 @@
         - apply
         - delete
 
-    # ---
+    # --- Apply and Delete
 
     - name: Apply
       shell: >

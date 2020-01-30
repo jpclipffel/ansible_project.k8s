@@ -1,4 +1,6 @@
 - hosts:
+    - all
+
   tasks:
     - name: Assertions
       include_tasks:
