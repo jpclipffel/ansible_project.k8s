@@ -1,14 +1,14 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: "{{ service_name }}"
+  name: "{{ service_name }}-virtualservice"
 spec:
   gateways:
-    - "{{ gateway_name }}"
+    - "{{ gateway_name }}-gateway"
     # - mesh
   hosts:
     - "{{ gateway_host }}"
   http:
     - route:
       - destination:
-          host: "{{ service_name }}"
+          host: "{{ service_name }}-service"
