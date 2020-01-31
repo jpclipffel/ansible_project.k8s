@@ -2,34 +2,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ service_name }}"
+  name: {{ service_name }}
+  labels:
+    app: {{ service_name }}
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      run: "{{ service_name }}"
-  replicas: 2
+      app: {{ service_name }}
   template:
     metadata:
       labels:
-        run: "{{ service_name }}"
+        app: {{ service_name }}
     spec:
       containers:
-        - name: hello-world
+        - name: {{ service_name }}
           image: gcr.io/google-samples/node-hello:1.0
           ports:
             - containerPort: 8080
-              protocol: TCP
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ service_name }}"
+  name: {{ service_name }}
+  labels:
+    app: {{ service_name }}
+    service: {{ service_name }}
 spec:
-  selector:
-    run: "{{ service_name }}"
   type: NodePort
   ports:
-    - port: 8080
-      nodePort: {{ service_port }}
-      protocol: TCP
+    - port: {{ service_port }}
+      targetPort: 8080
+      name: http
+  selector:
+    app: {{ service_name }}
