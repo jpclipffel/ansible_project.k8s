@@ -1,17 +1,27 @@
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: "{{ service_name }}-virtualservice"
+  name: {{ service_name }}
 spec:
   hosts:
-    - "{{ gateway_host }}"
-    # - "*"
+    - "*"
   gateways:
-    - "{{ gateway_name }}"
-    # - mesh
+    - {{ gateway_name }}
   http:
-    - route:
-      - destination:
-          port: 
-            number: {{ service_port }}
-          host: "{{ service_name }}"
+  # - match:
+  #   - uri:
+  #       exact: /productpage
+  #   - uri:
+  #       prefix: /static
+  #   - uri:
+  #       exact: /login
+  #   - uri:
+  #       exact: /logout
+  #   - uri:
+  #       prefix: /api/v1/products
+    route:
+    - destination:
+        host: {{ service_name }}
+        port:
+          number: 8080
