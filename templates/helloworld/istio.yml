@@ -31,7 +31,8 @@ metadata:
     service: {{ service_name }}
 spec:
   ports:
-    - port: 8080
+    - port: {{ service_port }}
+      targetPort: 8080
       name: http
   selector:
     app: {{ service_name }}
@@ -54,4 +55,4 @@ spec:
         - destination:
             host: {{ service_name }}
             port:
-              number: 8080
+              number: {{ service_port }}
