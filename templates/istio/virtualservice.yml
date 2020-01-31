@@ -3,12 +3,15 @@ kind: VirtualService
 metadata:
   name: "{{ service_name }}-virtualservice"
 spec:
-  gateways:
-    - "{{ gateway_name }}-gateway"
-    # - mesh
   hosts:
     - "{{ gateway_host }}"
+    # - "*"
+  gateways:
+    - "{{ gateway_name }}"
+    # - mesh
   http:
     - route:
       - destination:
-          host: "{{ service_name }}-service"
+          port: 
+            number: {{ service_port }}
+          host: "{{ service_name }}"
