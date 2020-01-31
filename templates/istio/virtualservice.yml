@@ -20,8 +20,8 @@ spec:
   #       exact: /logout
   #   - uri:
   #       prefix: /api/v1/products
-    route:
-    - destination:
-        host: {{ service_name }}
-        port:
-          number: 8080
+    - route:
+      - destination:
+          host: {{ service_name }}
+          port:
+            number: 8080
