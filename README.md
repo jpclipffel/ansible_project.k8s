@@ -13,6 +13,12 @@ Deploy and maintains the AWXLab Kubernetes infrastructure.
 |`main`|`apply`|Apply (deploy) the AWXLab K8S infrastructure<br>**Resources**: Calico, Istio, KNative|-|
 |`main`|`delete`|Delete the AWXLab K8S infrastructure<br>**Resources**: Calico, Istio, KNative|-|
 
+## Variables
+
+|Variable|Type|Required|Description|
+|--------|----|--------|-----------|
+|`facted.kubernetes.role`|`string`|Yes|Kubernetes node type (`master` or `worker`)|
+
 ## Usage
 
 ### Ansible Tower

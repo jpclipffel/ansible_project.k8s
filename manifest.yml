@@ -47,7 +47,7 @@
       register: _manifest
       run_once: yes
       when:
-        - facted.kubernetes.roles == 'master'
+        - facted.kubernetes.role == 'master'
       tags:
         - apply
         - delete
@@ -57,7 +57,7 @@
         dest: "{{ _manifest.path }}"
       run_once: yes
       when:
-        - facted.kubernetes.roles == 'master'
+        - facted.kubernetes.role == 'master'
       tags:
         - apply
         - delete
@@ -71,7 +71,7 @@
         KUBECONFIG: "{{ kubeconfig }}"
       run_once: yes
       when:
-        - facted.kubernetes.roles == 'master'
+        - facted.kubernetes.role == 'master'
       tags:
         - apply
 
@@ -82,6 +82,6 @@
         KUBECONFIG: "{{ kubeconfig }}"
       run_once: yes
       when:
-        - facted.kubernetes.roles == 'master'
+        - facted.kubernetes.role == 'master'
       tags:
         - delete
