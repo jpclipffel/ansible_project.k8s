@@ -46,9 +46,8 @@
         state: file
       register: _manifest
       run_once: yes
-      # when:
-      #   - facted.kubernetes.roles is defined
-      #   - facted.kubernetes.roles == master
+      when:
+        - facted.kubernetes.roles == 'master'
       tags:
         - apply
         - delete
@@ -57,9 +56,8 @@
         src: "{{ manifest }}"
         dest: "{{ _manifest.path }}"
       run_once: yes
-      # when:
-      #   - facted.kubernetes.roles is defined
-      #   - facted.kubernetes.roles == master
+      when:
+        - facted.kubernetes.roles == 'master'
       tags:
         - apply
         - delete
@@ -72,9 +70,8 @@
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
       run_once: yes
-      # when:
-      #   - facted.kubernetes.roles is defined
-      #   - facted.kubernetes.roles == master
+      when:
+        - facted.kubernetes.roles == 'master'
       tags:
         - apply
 
@@ -84,8 +81,7 @@
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
       run_once: yes
-      # when:
-      #   - facted.kubernetes.roles is defined
-      #   - facted.kubernetes.roles == master
+      when:
+        - facted.kubernetes.roles == 'master'
       tags:
         - delete
