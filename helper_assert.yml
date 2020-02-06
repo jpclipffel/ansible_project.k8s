@@ -1,7 +1,7 @@
 - assert:
     that: "{{ item }} is defined and {{ item }} | length > 0"
-    fail_msg: "Item: {{ item }}"
-    success_msg: "Variable: {{ item }}"
+    fail_msg: "Variable: {{ item }} -> {{ vars[item] | default('undefined') }}"
+    success_msg: "Variable: {{ item }} -> {{ vars[item] | default('undefined') }}"
   loop:
     - facted.kubernetes.role
     - kubeconfig
