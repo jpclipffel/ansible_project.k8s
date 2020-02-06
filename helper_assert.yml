@@ -8,7 +8,7 @@
     - always
 
 - debug:
-    vars:
+    var:
       - facted.kubernetes.role
       - kubeconfig
   tags:
