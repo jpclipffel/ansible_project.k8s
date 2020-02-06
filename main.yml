@@ -3,19 +3,21 @@
 
   tasks:
 
-    - name: Kubeconfig
-      include_tasks:
+    # --- Configuration ---
+
+    - include_tasks:
         file: helper_kubeconfig.yml
       tags:
         - always
 
-    - name: Assertions (project)
-      include_tasks:
+    # --- Assertions ---
+
+    - include_tasks:
         file: helper_assert.yml
       tags:
         - always
 
-    # ---
+    # --- Run ---
 
     - name: Configure hosts
       include_role:

@@ -2,8 +2,31 @@
     - all
 
   tasks:
-    - name: Handle manifest
-      include_tasks:
+
+    # --- Configuration ---
+
+    - include_tasks:
+        file: helper_kubeconfig.yml
+      tags:
+        - always
+
+    # --- Assertions ---
+
+    - include_tasks:
+        file: helper_assert.yml
+      tags:
+        - always
+
+    - assert:
+        that: "{{ item }} is defined and {{ item }} | length > 0"
+        fail_msg: "Undefined or empty variable '{{ item }}'"
+      with_items:
+        - manifest
+        - gateway_name
+
+    # --- Run ---
+
+    - include_tasks:
         file: helper_manifest.yml
       vars:
         - manifest: "{{ manifest }}"
