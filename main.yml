@@ -20,7 +20,7 @@
         - bootstrap_master
         - bootstrap_worker
 
-    # --- Run ---
+    # ---
 
     - name: Configure hosts
       include_role:
@@ -36,7 +36,7 @@
       vars:
         k8s_base_node_type: "{{ facted.kubernetes.role }}"
         k8s_base_kubeconfig: "{{ kubeconfig }}"
-        k8s_base_control_plane_endpoint: "{{ control_plane_endpoint }}"
+        k8s_base_control_plane_endpoint: "{{ control_plane_endpoint | default('-') }}"
       tags:
         - install
         - configure
