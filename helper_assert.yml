@@ -8,7 +8,7 @@
     - always
 
 - debug:
-    var: "{{ item }}"
+    var: item
   loop:
     - facted.kubernetes.role
     - kubeconfig
