@@ -15,7 +15,7 @@
 
     - assert:
         that: "control_plane_endpoint is defined and control_plane_endpoint | length > 0"
-        fail_msg: "Undefined or empty variable 'control_plane_endpoint'"
+        fail_msg: "Undefined or empty variable 'control_plane_endpoint': control_plan_endpoint | default('undefined')"
       tags:
         - bootstrap_master
         - bootstrap_worker
