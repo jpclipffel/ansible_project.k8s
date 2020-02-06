@@ -1,10 +1,16 @@
 - assert:
     that: "{{ item }} is defined and {{ item }} | length > 0"
-    fail_msg: "Variable: {{ item }} -> {{ vars[item] | default('undefined') }}"
-    success_msg: "Variable: {{ item }} -> {{ vars[item] | default('undefined') }}"
+    fail_msg: "Undefined or empty variable '{{ item }}'"
   loop:
     - facted.kubernetes.role
     - kubeconfig
+  tags:
+    - always
+
+- debug:
+    vars:
+      - facted.kubernetes.role
+      - kubeconfig
   tags:
     - always
 
