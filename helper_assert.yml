@@ -7,14 +7,6 @@
   tags:
     - always
 
-- debug:
-    var: item
-  loop:
-    - facted.kubernetes.role
-    - kubeconfig
-  tags:
-    - always
-
 # - fail:
 #     msg: >
 #       Undefined or empty variable 'facted.kubernetes.role'
