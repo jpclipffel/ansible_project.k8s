@@ -1,5 +1,5 @@
 - assert:
-    that: "vars[{{ item }}] is defined and vars[{{ item }}] | length > 0"
+    that: "{{ vars[item] is defined and vars[item] | length > 0}}"
     fail_msg: "Undefined or empty variable '{{ item }}': {{ vars[item] | default('undefined') }}"
   with_items:
     - facted.kubernetes.role
