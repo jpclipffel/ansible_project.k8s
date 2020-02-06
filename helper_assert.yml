@@ -1,6 +1,6 @@
 - assert:
     that: "{{ item }} is defined and {{ item }} | length > 0"
-    fail_msg: "Undefined or empty variable '{{ item }}': {{ {{ item }} | default('undefined') }}"
+    fail_msg: "Undefined or empty variable '{{ item }}': {{ lookup('vars', item) | default('undefined') }}"
     # success_msg: "Validated variable '{{ item }}': {{ vars[item] }}"
   with_items:
     - facted.kubernetes.role
