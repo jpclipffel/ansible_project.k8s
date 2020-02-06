@@ -66,7 +66,7 @@
 
     # --- Apply | Delete ---
 
-    - name: Apply
+    - name: Apply manifest
       shell: >
         kubectl apply -f {{ _manifest.path }}
       environment:
@@ -77,7 +77,7 @@
       tags:
         - apply
 
-    - name: Delete
+    - name: Delete manifest
       shell: >
         kubectl delete -f {{ _manifest.path }}
       environment:
