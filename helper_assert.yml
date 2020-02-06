@@ -1,28 +1,37 @@
-- fail:
-    msg: >
-      Undefined or empty variable 'facted.kubernetes.role'
-      facted.kubernetes.role: {{ facted.kubernetes.role | default('not defined') }}
-  when:
-    - facted.kubernetes.role is not defined
+- assert:
+    that: "{{ item }} is defined and {{ item }} | length > 0"
+    fail_msg: "Undefined or empty variable '{{ item }}'"
+  with_items:
+    - facted.kubernetes.role
+    - kubeconfig
   tags:
     - always
 
-- fail:
-    msg: >
-      Undefined or empty variable 'kubeconfig'
-      kubeconfig: {{ kubeconfig | default('not defined') }}
-  run_once: yes
-  when:
-    - kubeconfig is not defined
-  tags:
-    - always
+# - fail:
+#     msg: >
+#       Undefined or empty variable 'facted.kubernetes.role'
+#       facted.kubernetes.role: {{ facted.kubernetes.role | default('not defined') }}
+#   when:
+#     - facted.kubernetes.role is not defined
+#   tags:
+#     - always
 
-- fail:
-    msg: >
-      Undefined or empty variable 'control_plane_endpoint'
-      control_plane_endpoint: {{ control_plane_endpoint | default('not defined') }}
-  run_once: yes
-  when:
-    - control_plane_endpoint is not defined
-  tags:
-    - always
+# - fail:
+#     msg: >
+#       Undefined or empty variable 'kubeconfig'
+#       kubeconfig: {{ kubeconfig | default('not defined') }}
+#   run_once: yes
+#   when:
+#     - kubeconfig is not defined
+#   tags:
+#     - always
+
+# - fail:
+#     msg: >
+#       Undefined or empty variable 'control_plane_endpoint'
+#       control_plane_endpoint: {{ control_plane_endpoint | default('not defined') }}
+#   run_once: yes
+#   when:
+#     - control_plane_endpoint is not defined
+#   tags:
+#     - always

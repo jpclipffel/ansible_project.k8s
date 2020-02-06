@@ -3,19 +3,11 @@
 
   tasks:
 
-    # --- Configuration ---
-
     - include_tasks:
         file: helper_kubeconfig.yml
-      tags:
-        - always
-
-    # --- Assertions ---
 
     - include_tasks:
         file: helper_assert.yml
-      tags:
-        - always
 
     - assert:
         that: "{{ item }} is defined and {{ item }} | length > 0"
@@ -24,7 +16,7 @@
         - manifest
         - gateway_name
 
-    # --- Run ---
+    # ---
 
     - include_tasks:
         file: helper_manifest.yml
@@ -37,14 +29,14 @@
     - shell: >
         echo $(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
       environment:
-        KUBECONFIG: "{{ k8s_mesh_kubeconfig }}"
-      register: "istio_http_nodePort"
+        KUBECONFIG: "{{ kubeconfig }}"
+      register: "nodePort"
       tags:
         - apply
 
     - name: Set Istio mesh information
       set_stats:
         data:
-          k8s_mesh_istio_http_nodePort: "{{ istio_http_nodePort.stdout }}"
+          istio_gateway_nodePort: "{{ nodePort.stdout }}"
       tags:
         - apply
