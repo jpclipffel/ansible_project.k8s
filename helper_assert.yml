@@ -13,7 +13,7 @@
       kubeconfig: {{ kubeconfig | default('not defined') }}
   run_once: yes
   when:
-    - kubeconfig is not defined or kubeconfig | length < 1
+    - kubeconfig is not defined
   tags:
     - always
 
@@ -23,6 +23,6 @@
       control_plane_endpoint: {{ control_plane_endpoint | default('not defined') }}
   run_once: yes
   when:
-    - control_plane_endpoint is not defined or control_plane_endpoint | length < 1
+    - control_plane_endpoint is not defined
   tags:
     - always

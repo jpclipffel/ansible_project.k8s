@@ -10,8 +10,10 @@ Deploy and maintains the AWXLab Kubernetes infrastructure.
 |`main`|`configure`|Configure hosts to run Docker and K8S|[docker_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/docker_base)<br>[k8s_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)|
 |`main`|`bootstrap_master`|Bootstrap the master(s) node(s) (with `k8s_base_node_type` set on `master`)<br>**Warning**: Node(s) will be reseted|[k8s_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)|
 |`main`|`bootstrap_worker`|Bootstrap the worker(s) node(s) (with `k8s_base_node_type` set on `worker`)<br>**Warning**: Node(s) will be reseted|[k8s_base](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)|
-|`main`|`apply`|Apply (deploy) the AWXLab K8S infrastructure<br>**Resources**: Calico, Istio, KNative|-|
-|`main`|`delete`|Delete the AWXLab K8S infrastructure<br>**Resources**: Calico, Istio, KNative|-|
+|`main`|`apply`|Apply (creat) the AWXLab K8S infrastructure<br>**Resources**: Calico, Istio, KNative|-|
+|`main`|`delete`|Delete (remove) the AWXLab K8S infrastructure<br>**Resources**: Calico, Istio, KNative|-|
+|`manifest`|`apply`|Apply (create) a K8S manifest|
+|`manifest`|`delete`|Delete (remove) a K8S manifest|
 
 ## Variables
 
