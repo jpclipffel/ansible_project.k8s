@@ -19,8 +19,7 @@
       loop:
         - control_plane_endpoint
       tags:
-        - bootstrap_master
-        - bootstrap_worker
+        - cluster
 
     # ---
 
