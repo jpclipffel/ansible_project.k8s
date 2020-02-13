@@ -14,8 +14,10 @@
         - always
 
     - assert:
-        that: "control_plane_endpoint is defined and control_plane_endpoint | length > 0"
-        fail_msg: "Undefined or empty variable 'control_plane_endpoint': control_plan_endpoint | default('undefined')"
+        that: "{{ item }} is defined and {{ item }} | length > 0"
+        fail_msg: "Undefined or empty variable '{{ item }}'"
+      loop:
+        - control_plane_endpoint
       tags:
         - bootstrap_master
         - bootstrap_worker
@@ -40,8 +42,7 @@
       tags:
         - install
         - configure
-        - bootstrap_master
-        - bootstrap_worker
+        - cluster
         - reset
 
     - name: Configure service mesh

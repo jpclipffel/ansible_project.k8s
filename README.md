@@ -4,16 +4,21 @@ Deploy and maintains the AWXLab Kubernetes infrastructure.
 
 ## Run
 
+Tags can be associated when used with the same playbook.
+
 |Playbook|Tags|Description|
 |--------|----|-----------|
 |`main.yml`|`install`, `configure`|Setup the Kubernetes nodes (hosts)|
-|`main.yml`|`install`, `configure`|Setup the Kubernetes hosts (nodes)|
+|`main.yml`|`bootstrap_master`|Create a Kubernetes cluster|
+|`main.yml`|`bootstrap_worker`|Add *workers* nodes to a Kubernetes cluster|
 
 ## Variables
 
 |Variable|Type|Required|Description|
 |--------|----|--------|-----------|
 |`facted.kubernetes.role`|`string`|Yes|Kubernetes node type (`master` or `worker`)|
+|`control_plane_endpoint`|`string`|Yes|Control plane FQDN|
+|`kubeconfig`|`string`|No|Path to the node's configuration file<br>Defaults to Ansible user's `$HOME/.kube/admin.conf`|
 
 ## Usage
 
