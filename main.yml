@@ -18,11 +18,11 @@
     # Thoses steps are required only for K8S cluster management.
     # Ignored for installation and reset steps.
 
-    - include_tasks:
-        file: helper_kubeconfig.yml
-        apply: { tags: [ always ] }
-      tags:
-        - cluster
+    # - include_tasks:
+    #     file: helper_kubeconfig.yml
+    #     apply: { tags: [ always ] }
+    #   tags:
+    #     - cluster
 
     - include_tasks:
         file: helper_assert.yml
@@ -45,7 +45,6 @@
         name: common/k8s_base
       vars:
         k8s_base_node_type: "{{ node_type | default('') }}"
-        k8s_base_kubeconfig: "{{ kubeconfig | default('') }}"
         k8s_base_control_plane_endpoint: "{{ control_plane_endpoint | default('') }}"
       tags:
         - install
@@ -55,8 +54,6 @@
     - name: Configure Kubernetes service mesh
       include_role:
         name: common/k8s_mesh
-      vars:
-        k8s_mesh_kubeconfig: "{{ kubeconfig }}"
       run_once: yes
       when:
         - node_type == "master"
