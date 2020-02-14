@@ -3,15 +3,32 @@
 
   tasks:
 
+    # --- Container runtime ---
+
+    - name: Install and configure container runtime
+      include_role:
+        name: common/docker_base
+      tags:
+        - install
+        - configure
+        - reset
+
+    # --- Self-configuration and common assertions ---
+    #
+    # Thoses steps are required only for K8S cluster management.
+    # Ignored for installation and reset steps.
+
     - include_tasks:
         file: helper_kubeconfig.yml
+        apply: { tags: [ always ] }
       tags:
-        - always
+        - cluster
 
     - include_tasks:
         file: helper_assert.yml
+        apply: { tags: [ always ] }
       tags:
-        - always
+        - cluster
 
     - assert:
         that: "{{ item }} is defined and {{ item }} | length > 0"
@@ -21,17 +38,9 @@
       tags:
         - cluster
 
-    # ---
+    # --- Cluster management ---
 
-    - name: Configure hosts
-      include_role:
-        name: common/docker_base
-      tags:
-        - install
-        - configure
-        - reset
-
-    - name: Configure cluster
+    - name: Install and configure Kubernetes
       include_role:
         name: common/k8s_base
       vars:
@@ -40,11 +49,10 @@
         k8s_base_control_plane_endpoint: "{{ control_plane_endpoint | default('') }}"
       tags:
         - install
-        - configure
         - cluster
         - reset
 
-    - name: Configure service mesh
+    - name: Configure Kubernetes service mesh
       include_role:
         name: common/k8s_mesh
       vars:
