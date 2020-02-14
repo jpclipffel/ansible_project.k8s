@@ -3,6 +3,5 @@
     fail_msg: "Undefined or empty variable '{{ item }}'"
   loop:
     - node_type
-    - kubeconfig
   tags:
     - always

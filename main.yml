@@ -24,17 +24,18 @@
     #   tags:
     #     - cluster
 
-    - include_tasks:
-        file: helper_assert.yml
-        apply: { tags: [ always ] }
-      tags:
-        - cluster
+    # - include_tasks:
+    #     file: helper_assert.yml
+    #     apply: { tags: [ always ] }
+    #   tags:
+    #     - cluster
 
     - assert:
         that: "{{ item }} is defined and {{ item }} | length > 0"
         fail_msg: "Undefined or empty variable '{{ item }}'"
       loop:
         - control_plane_endpoint
+        - node_type
       tags:
         - cluster
 
