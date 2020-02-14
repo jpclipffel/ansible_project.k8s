@@ -2,7 +2,7 @@
     that: "{{ item }} is defined and {{ item }} | length > 0"
     fail_msg: "Undefined or empty variable '{{ item }}'"
   loop:
-    - facted.kubernetes.role
+    - node_type
     - kubeconfig
   tags:
     - always

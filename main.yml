@@ -1,3 +1,23 @@
+# --- Tags hosts based on their group ---
+
+- hosts:
+    - masters
+  tasks:
+    set_fact:
+      node_type: "master"
+    when:
+      - node_type is not defined
+
+- hosts:
+    - workers
+  tasks:
+    set_fact:
+      node_type: "worker"
+    when:
+      - node_type is not defined
+
+# ---
+
 - hosts:
     - all
 
@@ -35,9 +55,9 @@
       include_role:
         name: common/k8s_base
       vars:
-        k8s_base_node_type: "{{ facted.kubernetes.role }}"
-        k8s_base_kubeconfig: "{{ kubeconfig }}"
-        k8s_base_control_plane_endpoint: "{{ control_plane_endpoint | default('-') }}"
+        k8s_base_node_type: "{{ node_type | default('') }}"
+        k8s_base_kubeconfig: "{{ kubeconfig | default('') }}"
+        k8s_base_control_plane_endpoint: "{{ control_plane_endpoint | default('') }}"
       tags:
         - install
         - configure
@@ -51,7 +71,7 @@
         k8s_mesh_kubeconfig: "{{ kubeconfig }}"
       run_once: yes
       when:
-        - facted.kubernetes.role == "master"
+        - node_type == "master"
       tags:
         - apply
         - delete
