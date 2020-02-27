@@ -1,0 +1,29 @@
+# Host group resolution
+#
+# We support two methods to categorize nodes (masters or workers):
+# Using host groups: 'masters' and 'workers'
+# Using variables: 'masters' or 'workers'
+
+
+- name: Resolve masters host group from node type
+  add_host:
+    hostname: "{{ item }}"
+    groups: "masters"
+  when:
+    - hostvars[item]
+    - hostvars[item].k8s_node_type is defined and hostvars[item].k8s_node_type == 'master'
+  with_items: "{{ ansible_play_hosts }}"
+  tags:
+    - always
+
+
+- name: Resolve workers host group from node type
+  add_host:
+    hostname: "{{ item }}"
+    groups: "workers"
+  when:
+    - hostvars[item]
+    - hostvars[item].k8s_node_type is defined and hostvars[item].k8s_node_type == 'worker'
+  with_items: "{{ ansible_play_hosts }}"
+  tags:
+    - always

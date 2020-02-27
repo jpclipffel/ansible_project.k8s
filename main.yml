@@ -2,69 +2,29 @@
     - all
 
   tasks:
-    # --- Self-configuration and common assertions ---
-    #
-    # Thoses steps are required only for K8S cluster management.
-    # Ignored for installation and reset steps.
 
-    # - include_tasks:
-    #     file: helper_kubeconfig.yml
-    #     apply: { tags: [ always ] }
-    #   tags:
-    #     - cluster
-
-    # - include_tasks:
-    #     file: helper_assert.yml
-    #     apply: { tags: [ always ] }
-    #   tags:
-    #     - cluster
-
-
-
-
-    # Node type resolution
-    #
-    # We support two mode to categorize nodes (masters or workers):
-    # Using host groups: 'masters' and 'workers'
-    # Using variables: 'masters' or 'workers'
-
-    - name: Initial assertions
-      assert:
-        that:
-          - k8s is defined and k8s is mapping
+    - include_tasks:
+        file: helper_inventory.yml
+        apply: { tags: [ always ] }
       tags:
         - always
 
-    - name: Loading local facts from vars
-      set_fact:
-        _k8s: "{{ k8s }}"
-      tags:
-        - always
+# ---
 
-    - name: Resolve node type from host group
-      set_fact:
-        _k8s: "{{ _k8s | combine({'node_type': item.type}) }}"
-      when:
-        - k8s.node_type is not defined
-        - item.group in group_names
-      with_items:
-        - { "group": "masters", "type": "master" }
-        - { "group": "workers", "type": "worker" }
-        # - { "group": "scraps",  "type": "scrap" }
-      tags:
-        - always
+- hosts:
+    - masters
+    - workers
+
+  tasks:
 
     - name: Assertions
       assert:
         that:
-          - _k8s is mapping
-          - _k8s.node_type is defined and _k8s.node_type in [ "master", "worker" ]
-          - _k8s.control_plane_endpoint is defined and _k8s.control_plane_endpoint is string
+          - k8s_node_type is defined and k8s_node_type in [ "master", "worker" ]
+          - k8s_control_plane_endpoint is defined and k8s_control_plane_endpoint is string
       tags:
         - always
 
-
-    # --- Container runtime ---
 
     - name: Configure container runtime
       include_role:
@@ -74,15 +34,14 @@
         - teardown
 
 
-    # --- Kubernetes ---
-
-    - name: Set k8s_base variables
+    - name: Set facts from playbook variables
       set_fact:
-        k8s_base_node_type: "{{ _k8s.node_type }}"
-        k8s_base_control_plane_endpoint: "{{ _k8s.control_plane_endpoint }}"
+        k8s_base_node_type: "{{ k8s_node_type }}"
+        k8s_base_control_plane_endpoint: "{{ k8s_control_plane_endpoint }}"
       tags:
         - setup
         - teardown
+
 
     - name: Configure Kubernetes
       include_role:
@@ -91,14 +50,12 @@
         - setup
         - teardown
 
-    # --- Kuebernetes network ---
 
     - name: Configure Kubernetes service mesh
       include_role:
         name: common/k8s_mesh
-      run_once: yes
       when:
-        - node_type == "master"
+        - k8s_node_type == "master"
       tags:
         - apply
         - delete

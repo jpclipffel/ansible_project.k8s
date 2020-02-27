@@ -1,56 +1,72 @@
-# AWXLab - Project - Kubernetes
-
-Deploy and maintains the AWXLab Kubernetes infrastructure.
-
-## Run
-
-Tags can be associated when used with the same playbook.
-
-|Playbook|Tags|Description|
-|--------|----|-----------|
-|`main.yml`|`install`, `configure`|Setup the Kubernetes nodes (hosts)|
-|`main.yml`|`bootstrap_master`|Create a Kubernetes cluster|
-|`main.yml`|`bootstrap_worker`|Add *workers* nodes to a Kubernetes cluster|
-
-## Variables
-
-|Variable|Type|Required|Description|
-|--------|----|--------|-----------|
-|`facted.kubernetes.role`|`string`|Yes|Kubernetes node type (`master` or `worker`)|
-|`control_plane_endpoint`|`string`|Yes|Control plane FQDN|
-|`kubeconfig`|`string`|No|Path to the node's configuration file<br>Defaults to Ansible user's `$HOME/.kube/admin.conf`|
+# Ansible - Projects - Kubernetes
 
 ## Usage
 
-### Ansible Tower
+This project contains multiples playbooks and helpers tasks lists. Runnable playbooks are documented in the next sections.
 
-* Create a new **project** using **Git** as a SCM
-* Provide the following configuration:
+## Inventory setup
 
-|Key|Value|
-|---|-----|
-|SCM URL|`https://git.dt.ept.lu/jpclipffel/awxlab-project-k8s.git`|
-|SCM Credential|Your SCM credentials (see the *Hints* section)|
-|SCM update options|Check *Update revison on launch*|
+This project support two methods to distinguises between Kubernetes *masters* and *workers* nodes:
+
+* The hosts may be located in a group named `masters` or `workers`
+* The hosts may have the variable `k8s_node_type` set on `master` or `worker`
+
+In both case, the helper tasks list `helper_nodetype.yml` will set the node type by (re)defining the variable `k8s_node_type`.
+
+## Common variables
+
+Those variables applies to all playbooks.
+
+|Variable|Type|Required|Description|
+|--------|----|--------|-----------|
+|`k8s_node_type`|`string`|-|Required if hosts are not located in the groups `masters` or `workers`.|
 
 ---
 
-## Hints
+## Playbook `main.yml`
 
-### Create a GitLab credential for Ansible Tower
+Deploy and maintains a Kubernetes cluster. It starts by creating or scaling a cluster with the *masters* node. Then, it joins the *workers* nodes to the cluster.
 
-#### 1 - On GitLab
+Beside Kubernetes, the playbook will also install *Helm* and the required Python packages to interface with Kubernetes.
 
-* Create a new access token (go to *Settings*, *Access Tokens*)
-* Provide at the least the `read_repository` scope
-* Save the token attributes in a safe location (e.g. *KeePass*)
+This playbook essentialy wraps the following components:
 
-#### 2 - On Ansible Tower
+* Role [`k8s_base`](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)
+* Role [`k8s_mesh`](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_mesh)
 
-* Create a new credential of type **Source Control**
-* Provide the following configuration:
+### Tags
 
-|Key|Value|
-|---|-----|
-|Username|Your token name|
-|Password|Your token value|
+Multiple tags can be used at once (e.g. `setup`, `apply`, `calico`, `istio` to simultaneously setup the cluster and deploy a service mesh).
+
+|Tag|Description|
+|---|-----------|
+|`setup`|Setup (bluids, scales, maintains) a Kubernetes cluster|
+|`teardown`|Teardown a Kubernetes cluster|
+|`apply`|Deploys the K8S **services**|
+|`delete`|Removes the K8S **services**|
+
+### Variables
+
+|Variable|Type|Required|Description|
+|--------|----|--------|-----------|
+|`k8s_control_plane_endpoint`|`string`|Yes|K8S control plane FQDN|
+
+---
+
+## Playbook `consul.yml`
+
+Deploy and maintains a Consul servers cluster (outside of Kubernetes) and clients (within Kubernetes).
+
+This playbook essentialy wraps the following components:
+
+* Role [`consul_base`](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/consul_base)
+* Playbook `helm.yml`
+
+### Tags
+
+|Tag|Description|
+|---|-----------|
+|`setup`|Setup the Consul server cluster|
+|`teardown`|Teardowns the Consul server cluster|
+|`apply`|Deploys the Consul K8S clients|
+|`delete`|Removes the Consul K8S clients|

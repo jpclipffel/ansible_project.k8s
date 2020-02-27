@@ -1,0 +1,80 @@
+- hosts:
+    - all
+
+  tasks:
+    - include_tasks:
+        file: helper_inventory.yml
+        apply: { tags: [ always ] }
+      tags:
+        - always
+
+# ---
+
+- hosts:
+    - masters
+
+  vars:
+    consul_helm_version: "0.17.0"
+    consul_helm_url: "https://github.com/hashicorp/consul-helm/archive/v{{ consul_helm_version }}.tar.gz"
+    consul_helm_name: "consul"
+    consul_secret_name: "consul-gossip-encryption-key"
+
+  tasks:
+
+    # Consul cluster
+    #
+    # Install and setup a Consul cluster.
+    - name: Consul cluster
+      include_role:
+        name: common/consul_base
+      tags:
+        - setup
+        - teardown
+
+    # Consul client
+    #
+    # Install and setup Consul client on K8S cluster.
+    - block:
+        # ---
+        - name: Assertions
+          assert:
+            that:
+              - consul_base_conf_encrypt is defined and consul_base_conf_encrypt | length > 0
+              - consul_base_cluster_hosts is defined and consul_base_cluster_hosts is array and consul_base_cluster_hosts | lenth > 0
+          tags:
+              - never
+        # ---
+        - name: Create Consul gossip encrypt secret
+          shell: >
+            kubectl create secret generic {{ consul_secret_name }} --from-literal=key={{ consul_base_conf_encrypt }}
+          tags:
+            - apply
+        # ---
+        - name: Install Consul clients (Helm)
+          shell: >
+            helm install {{ consul_helm_name }} {{ consul_helm_url }}
+            --set global.enabled=false
+            --set global.gossipEncryption.secretName={{ consul_secret_name }}
+            --set global.gossipEncryption.secretKey=key
+            --set client.enabled=true
+            --set 'client.join={"awxlab-k8s-01.dt.ept.lu", "awxlab-k8s-02.dt.ept.lu"}'
+            --set syncCatalog.enabled=true
+            --set syncCatalog.toConsul=true
+            --set syncCatalog.toK8S=false
+          tags:
+            - apply
+        # ---
+        - name: Uninstall Consul clients (Helm)
+          shell: >
+            helm uninstall {{ consul_helm_name }}
+          ignore_errors: yes
+          tags:
+            - delete
+        # ---
+        - name: Remove Consul gossip encrypt secret
+          shell:
+            kubectl delete secret {{ consul_secret_name }}
+          tags:
+            - delete
+        # ---
+      run_once: yes
