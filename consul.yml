@@ -5,8 +5,10 @@
     - include_tasks:
         file: helper_inventory.yml
         apply: { tags: [ always ] }
+      with_items:
+        - helper_inventory.yml
+        - helper_kubeconfig.yml
       tags:
-        - always
 
 # ---
 
@@ -27,9 +29,10 @@
     - name: Consul cluster
       include_role:
         name: common/consul_base
+      vars:
+        consul_base_conf_client_addr: "0.0.0.0"
       tags:
-        - setup
-        - teardown
+        - always
 
     # Consul client
     #
@@ -40,41 +43,58 @@
           assert:
             that:
               - consul_base_conf_encrypt is defined and consul_base_conf_encrypt | length > 0
-              - consul_base_cluster_hosts is defined and consul_base_cluster_hosts is array and consul_base_cluster_hosts | lenth > 0
+              - consul_base_cluster_hosts is defined and consul_base_cluster_hosts | length > 0
+              - consul_base_conf_datacenter is defined and consul_base_conf_datacenter | length > 0
           tags:
-              - never
+              - apply
+        # ---
+        - name: Uninstall Consul clients (Helm)
+          shell: >
+            helm uninstall {{ consul_helm_name }}
+          register: _helm_uninstall
+          failed_when:
+            - _helm_uninstall.rc != 0 and not "Release not loaded" in _helm_uninstall.stderr
+          tags:
+            - apply
+            - delete
+        # ---
+        - name: Remove Consul gossip encrypt secret
+          shell:
+            kubectl delete secret {{ consul_secret_name }}
+          environment:
+            KUBECONFIG: "{{ k8s_kubeconfig }}"
+          register: _delete_secret
+          failed_when:
+            - _delete_secret.rc != 0 and not "not found" in _delete_secret.stderr
+          tags:
+            - apply
+            - delete
         # ---
         - name: Create Consul gossip encrypt secret
           shell: >
             kubectl create secret generic {{ consul_secret_name }} --from-literal=key={{ consul_base_conf_encrypt }}
+          environment:
+            KUBECONFIG: "{{ k8s_kubeconfig }}"
+          register: _token_create
+          failed_when:
+            - _token_create.rc != 0 and not "already exists" in _token_create.stderr
           tags:
             - apply
         # ---
         - name: Install Consul clients (Helm)
           shell: >
             helm install {{ consul_helm_name }} {{ consul_helm_url }}
-            --set global.enabled=false
             --set global.gossipEncryption.secretName={{ consul_secret_name }}
             --set global.gossipEncryption.secretKey=key
+            --set global.datacenter={{ consul_base_conf_datacenter }}
+            --set server.enabled=false
             --set client.enabled=true
-            --set 'client.join={"awxlab-k8s-01.dt.ept.lu", "awxlab-k8s-02.dt.ept.lu"}'
+            --set "client.join={% raw %}{{% endraw %}{{ consul_base_cluster_hosts | join(', ') }}{% raw %}}{% endraw %}"
             --set syncCatalog.enabled=true
             --set syncCatalog.toConsul=true
             --set syncCatalog.toK8S=false
+            --set syncCatalog.syncClusterIPServices=false
           tags:
             - apply
-        # ---
-        - name: Uninstall Consul clients (Helm)
-          shell: >
-            helm uninstall {{ consul_helm_name }}
-          ignore_errors: yes
-          tags:
-            - delete
-        # ---
-        - name: Remove Consul gossip encrypt secret
-          shell:
-            kubectl delete secret {{ consul_secret_name }}
-          tags:
-            - delete
         # ---
       run_once: yes
