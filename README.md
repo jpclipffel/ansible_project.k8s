@@ -55,14 +55,16 @@ Multiple tags can be used at once (e.g. `setup`, `apply`, `calico`, `istio` to s
 
 ## Playbook `consul.yml`
 
-Deploy and maintains a Consul servers cluster (outside of Kubernetes) and clients (within Kubernetes).
+Deploy and maintains a Consul servers cluster (outside of Kubernetes) and clients (inside Kubernetes).
 
-This playbook essentialy wraps the following components:
+This playbook reuse the following components:
 
 * Role [`consul_base`](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/consul_base)
-* Playbook `helm.yml`
 
 ### Tags
+
+The role `consul_base` is **always** included and thus the Consul cluster facts are **always** gathered.
+This means that one may invoke the playbook with `apply` withou having to specify the cluster's hosts, key, etc.
 
 |Tag|Description|
 |---|-----------|
@@ -70,3 +72,50 @@ This playbook essentialy wraps the following components:
 |`teardown`|Teardowns the Consul server cluster|
 |`apply`|Deploys the Consul K8S clients|
 |`delete`|Removes the Consul K8S clients|
+
+### Variables
+
+|Variable|Type|Required|Description|
+|--------|----|--------|-----------|
+|`consul_base_cluster_hosts`|`list`|No|List of Consul cluster hosts.<br>Can be automatically deduced by the playbook.|
+|`consul_base_conf_datacenter`|`string`|No|Consul datacenter name.<br>Can be automatically deduced by the playbook.|
+|`consul_base_conf_encrypt`|`string`|No|Consul gossip encryption key.<br>Can be automatically deduced by the playbook.|
+
+---
+
+## Playbook `manifest.yml`
+
+Apply or delete a Kubernetes manifest.
+
+### Tags
+
+|Tag|Description|
+|---|-----------|
+|`apply`|Applies the provided `manifest`|
+|`delete`|Deletes the given `manigest`|
+
+### Variables
+
+Please note that the playbook **does not asserts** the manifest variables.
+If a variable used in the manifest file is missing, the playbook will fails.
+
+|Variable|Type|Required|Description|
+|--------|----|--------|-----------|
+|`manifest`|`string`, file system path|Yes|Path to manifest template file (should be located under project's `templates/` directory).|
+
+---
+
+## Tasks list `helper_kubeconfig.yml`
+
+Set the variable `k8s_kubeconfig`.
+
+---
+
+## Tasks list `helper_inventory.yml`
+
+Ensure that the hosts are located into the correct groups and have the correct `k8s_node_type` variable value.
+
+|Group name|Variable `k8s_node_type`|
+|----------|------------------------|
+|`masters` |`master`                |
+|`workers` |`worker`                |
