@@ -17,13 +17,20 @@
 
   tasks:
 
-    - name: Assertions
+    - name: Node type assertions
       assert:
         that:
           - k8s_node_type is defined and k8s_node_type in [ "master", "worker" ]
-          - k8s_control_plane_endpoint is defined and k8s_control_plane_endpoint is string
       tags:
         - always
+
+
+    - name: Setup assertions
+      assert:
+        that:
+          - k8s_control_plane_endpoint is defined and k8s_control_plane_endpoint is string
+      tags:
+        - setup
 
 
     - name: Configure container runtime
@@ -37,7 +44,7 @@
     - name: Set facts from playbook variables
       set_fact:
         k8s_base_node_type: "{{ k8s_node_type }}"
-        k8s_base_control_plane_endpoint: "{{ k8s_control_plane_endpoint }}"
+        k8s_base_control_plane_endpoint: "{{ k8s_control_plane_endpoint | default('-') }}"
       tags:
         - setup
         - teardown

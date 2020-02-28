@@ -3,13 +3,15 @@
 
   tasks:
     - include_tasks:
-        file: helper_inventory.yml
+        file: "{{ __item }}"
         apply: { tags: [ always ] }
       with_items:
         - helper_inventory.yml
         - helper_kubeconfig.yml
+      loop_control:
+        loop_var: __item
       tags:
-
+        - always
 # ---
 
 - hosts:
@@ -93,7 +95,7 @@
             --set syncCatalog.enabled=true
             --set syncCatalog.toConsul=true
             --set syncCatalog.toK8S=false
-            --set syncCatalog.syncClusterIPServices=false
+            --set syncCatalog.syncClusterIPServices=true
           tags:
             - apply
         # ---
