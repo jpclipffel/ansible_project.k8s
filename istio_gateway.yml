@@ -2,16 +2,24 @@
     - all
 
   tasks:
-
     - include_tasks:
-        file: helper_kubeconfig.yml
+        file: helper_inventory.yml
+        apply: { tags: [ always ] }
+      with_items:
+        - helper_inventory.yml
+        - helper_kubeconfig.yml
+      tags:
 
-    - include_tasks:
-        file: helper_assert.yml
+# ---
 
-    - assert:
+- hosts:
+    - masters
+
+  tasks:
+
+    - name: Assertions
+      assert:
         that: "{{ item }} is defined and {{ item }} | length > 0"
-        fail_msg: "Undefined or empty variable '{{ item }}'"
       with_items:
         - manifest
         - gateway_name
@@ -26,17 +34,17 @@
         - apply
         - delete
   
-    - shell: >
-        echo $(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
-      environment:
-        KUBECONFIG: "{{ kubeconfig }}"
-      register: "nodePort"
-      tags:
-        - apply
+    # - shell: >
+    #     echo $(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+    #   environment:
+    #     KUBECONFIG: "{{ kubeconfig }}"
+    #   register: "nodePort"
+    #   tags:
+    #     - apply
 
-    - name: Set Istio mesh information
-      set_stats:
-        data:
-          istio_gateway_nodePort: "{{ nodePort.stdout }}"
-      tags:
-        - apply
+    # - name: Set Istio mesh information
+    #   set_stats:
+    #     data:
+    #       istio_gateway_nodePort: "{{ nodePort.stdout }}"
+    #   tags:
+    #     - apply
