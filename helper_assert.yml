@@ -1,7 +1,0 @@
-- assert:
-    that: "{{ item }} is defined and {{ item }} | length > 0"
-    fail_msg: "Undefined or empty variable '{{ item }}'"
-  loop:
-    - node_type
-  tags:
-    - always
