@@ -1,0 +1,60 @@
+- hosts:
+    - all
+
+  tasks:
+
+    - include_tasks:
+        file: helper_inventory.yml
+        apply: { tags: [ always ] }
+      tags:
+        - always
+
+# ---
+
+- hosts:
+    - masters
+    - deleted
+
+  tasks:
+
+    - name: Select primary master
+      set_fact:
+        primary_master: "{{ inventory_hostname }}"
+      delegate_to: localhost
+      run_once: yes
+      when:
+        - hostvars[item].k8s_node_type == "master"
+      with_items: "{{ ansible_play_hosts }}"
+
+
+    - name: Drain node
+      shell: >
+        kubectl drain {{ hostvars[item].ansible_hostname }} --ignore-daemonsets --delete-local-data
+      delegate_to: "{{ primary_master }}"
+      run_once: yes
+      register: _drain_node
+      failed_when:
+        - _drain_node.rc != 0 and "(NotFound)" not in _drain_node.stderr 
+      when:
+        - hostvars[item].k8s_node_type == "delete"
+      with_items: "{{ ansible_play_hosts }}"
+
+
+    - name: Delete node
+      shell: >
+        kubectl delete node {{ hostvars[item].ansible_hostname }}
+      delegate_to: "{{ primary_master }}"
+      run_once: yes
+      register: _delete_node
+      failed_when:
+        - _delete_node.rc != 0 and "(NotFound)" not in _delete_node.stderr 
+      when:
+        - hostvars[item].k8s_node_type == "delete"
+      with_items: "{{ ansible_play_hosts }}"
+
+
+    - name: Reset node
+      shell: >
+        kubeadm reset -f
+      when:
+        - k8s_node_type == "delete"

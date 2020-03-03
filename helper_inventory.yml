@@ -29,6 +29,18 @@
     - always
 
 
+- name: Resolve workers group from node type
+  add_host:
+    hostname: "{{ item }}"
+    groups: "deleted"
+  when:
+    - hostvars[item]
+    - hostvars[item].k8s_node_type is defined and hostvars[item].k8s_node_type == 'delete'
+  with_items: "{{ ansible_play_hosts }}"
+  tags:
+    - always
+
+
 - name: Resolve node type from host group
   set_fact:
     k8s_node_type: "{{ item.type }}"
@@ -38,3 +50,4 @@
   with_items:
     - { "group": "masters", "type": "master" }
     - { "group": "workers", "type": "worker" }
+    - { "group": "deleted", "type": "delete"}

@@ -6,10 +6,16 @@ This project contains multiples playbooks and helpers tasks lists. Runnable play
 
 ## Inventory setup
 
-This project support two methods to distinguises between Kubernetes *masters* and *workers* nodes:
+This project support two methods to distinguises Kubernetes nodes types.
 
-* The hosts may be located in a group named `masters` or `workers`
-* The hosts may have the variable `k8s_node_type` set on `master` or `worker`
+* Using host groups (see table bellow)
+* Using host variable `k8s_node_type` (see table bellow)
+
+|Group name|`k8s_node_type`|Description|
+|----------|---------------|-----------|
+|`masters` |`master`       |Kubernetes master node|
+|`workers` |`worker`       |Kubernetes worker node|
+|`deleted` |`delete`       |Node may can be cleaned-up to be removed from cluster or to be transitioned from/to master/worker (see playbook `cleanup.yml`)|
 
 In both case, the helper tasks list `helper_nodetype.yml` will set the node type by (re)defining the variable `k8s_node_type`.
 
@@ -53,9 +59,27 @@ Multiple tags can be used at once (e.g. `setup`, `apply`, `calico`, `istio` to s
 
 ---
 
+## Playbook `cleanup.yml`
+
+Remove nodes from cluster and purge them.
+
+The nodes must either:
+
+* Have their variable `k8s_node_type` set on `delete`
+* Be a member of the group `deleted`
+
+---
+
 ## Playbook `consul.yml`
 
 Deploy and maintains a Consul servers cluster (outside of Kubernetes) and clients (inside Kubernetes).
+
+The servers and clients components are deployed according to this table:
+
+|Host group|Component|Notes|
+|----------|---------|-----|
+|`masters`|Server (out of K8S)|See section *Inventory setup* for more details regarding host groups and `k8s_node_type` variable|
+|`workers`|Client (within K8S)|See section *Inventory setup* for more details regarding host groups and `k8s_node_type` variable|
 
 This playbook reuse the following components:
 
