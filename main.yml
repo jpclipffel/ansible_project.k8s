@@ -46,6 +46,7 @@
         k8s_base_node_type: "{{ k8s_node_type }}"
         k8s_base_control_plane_endpoint: "{{ k8s_control_plane_endpoint | default('-') }}"
       tags:
+        - stats
         - setup
         - teardown
 
@@ -54,6 +55,7 @@
       include_role:
         name: common/k8s_base
       tags:
+        - stats
         - setup
         - teardown
 
