@@ -17,7 +17,7 @@ This project support two methods to distinguises Kubernetes nodes types.
 |`workers` |`worker`       |Kubernetes worker node|
 |`deleted` |`delete`       |Node may can be cleaned-up to be removed from cluster or to be transitioned from/to master/worker (see playbook `cleanup.yml`)|
 
-In both case, the helper tasks list `helper_nodetype.yml` will set the node type by (re)defining the variable `k8s_node_type`.
+The helper tasks list `helper_nodetype.yml` will set the correct node type and host group.
 
 ## Common variables
 
@@ -46,6 +46,7 @@ Multiple tags can be used at once (e.g. `setup`, `apply`, `calico`, `istio` to s
 
 |Tag|Description|
 |---|-----------|
+|`stats`|Collect and set custom stats|
 |`setup`|Setup (bluids, scales, maintains) a Kubernetes cluster|
 |`teardown`|Teardown a Kubernetes cluster|
 |`apply`|Deploys the K8S **services**|

@@ -21,7 +21,8 @@
     consul_helm_version: "0.17.0"
     consul_helm_url: "https://github.com/hashicorp/consul-helm/archive/v{{ consul_helm_version }}.tar.gz"
     consul_helm_name: "consul"
-    consul_secret_name: "consul-gossip-encryption-key"
+    consul_secrets_gossip: "consul-gossip-encryption-key"
+    consul_secrets_acltok: "consul-acl-token"
 
   tasks:
 
@@ -31,8 +32,6 @@
     - name: Consul cluster
       include_role:
         name: common/consul_base
-      vars:
-        consul_base_conf_client_addr: "0.0.0.0"
       tags:
         - always
 
@@ -60,42 +59,52 @@
             - apply
             - delete
         # ---
-        - name: Remove Consul gossip encrypt secret
+        - name: Remove Consul secrets
           shell:
-            kubectl delete secret {{ consul_secret_name }}
+            kubectl delete secret {{ item.name }}
           environment:
             KUBECONFIG: "{{ k8s_kubeconfig }}"
           register: _delete_secret
           failed_when:
             - _delete_secret.rc != 0 and not "not found" in _delete_secret.stderr
+          with_items:
+            - { name: "{{ consul_secrets_gossip }}" }
+            - { name: "{{ consul_secrets_acltok }}" }
           tags:
             - apply
             - delete
         # ---
-        - name: Create Consul gossip encrypt secret
+        - name: Create Consul secrets
           shell: >
-            kubectl create secret generic {{ consul_secret_name }} --from-literal=key={{ consul_base_conf_encrypt }}
+            kubectl create secret generic {{ item.name }} --from-literal=key={{ item.value }}
           environment:
             KUBECONFIG: "{{ k8s_kubeconfig }}"
           register: _token_create
           failed_when:
             - _token_create.rc != 0 and not "already exists" in _token_create.stderr
+          with_items:
+            - { name: "{{ consul_secrets_gossip }}", value: "{{ consul_base_conf_encrypt }}" }
+            - { name: "{{ consul_secrets_acltok }}", value: "{{ consul_base_token_agent | default('') }}" }
           tags:
             - apply
         # ---
         - name: Install Consul clients (Helm)
           shell: >
             helm install {{ consul_helm_name }} {{ consul_helm_url }}
-            --set global.gossipEncryption.secretName={{ consul_secret_name }}
+            --set global.gossipEncryption.secretName={{ consul_secrets_gossip }}
             --set global.gossipEncryption.secretKey=key
             --set global.datacenter={{ consul_base_conf_datacenter }}
             --set server.enabled=false
             --set client.enabled=true
-            --set "client.join={% raw %}{{% endraw %}{{ consul_base_cluster_hosts | join(', ') }}{% raw %}}{% endraw %}"
+            --set "client.join={% raw %}{{% endraw %}{{ consul_base_cluster_hosts | join(',') }}{% raw %}}{% endraw %}"
             --set syncCatalog.enabled=true
             --set syncCatalog.toConsul=true
             --set syncCatalog.toK8S=false
             --set syncCatalog.syncClusterIPServices=true
+            {% if consul_base_token_agent | length > 0 %}
+            --set syncCatalog.aclSyncToken.secretName={{ consul_secrets_acltok }}
+            --set syncCatalog.aclSyncToken.secretKey=key
+            {% endif %}
           tags:
             - apply
         # ---
