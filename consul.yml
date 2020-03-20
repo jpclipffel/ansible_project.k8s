@@ -100,7 +100,8 @@
             --set syncCatalog.enabled=true
             --set syncCatalog.toConsul=true
             --set syncCatalog.toK8S=false
-            --set syncCatalog.syncClusterIPServices=true
+            --set syncCatalog.syncClusterIPServices=false
+            --set syncCatalog.nodePortSyncType=ExternalFirst
             {% if consul_base_token_agent | length > 0 %}
             --set syncCatalog.aclSyncToken.secretName={{ consul_secrets_acltok }}
             --set syncCatalog.aclSyncToken.secretKey=key
