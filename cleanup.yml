@@ -53,8 +53,19 @@
       with_items: "{{ ansible_play_hosts }}"
 
 
+    # - name: Reset node
+    #   shell: >
+    #     kubeadm reset -f
+    #   when:
+    #     - k8s_node_type == "delete"
+    
+
     - name: Reset node
-      shell: >
-        kubeadm reset -f
+      include_role:
+        name: common/k8s_base
+        apply:
+          tags:
+            - teardown
+            - remove
       when:
         - k8s_node_type == "delete"
