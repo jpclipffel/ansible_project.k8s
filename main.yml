@@ -66,5 +66,6 @@
       when:
         - k8s_node_type == "master"
       tags:
+        - stats
         - apply
         - delete
