@@ -45,10 +45,9 @@
       set_fact:
         k8s_base_node_type: "{{ k8s_node_type }}"
         k8s_base_control_plane_endpoint: "{{ k8s_control_plane_endpoint | default('-') }}"
+        k8s_mesh_node_type: "{{ k8s_node_type }}"
       tags:
-        - stats
-        - setup
-        - teardown
+        - always
 
 
     - name: Configure Kubernetes
@@ -63,8 +62,8 @@
     - name: Configure Kubernetes service mesh
       include_role:
         name: common/k8s_mesh
-      when:
-        - k8s_node_type == "master"
+      # when:
+      #   - k8s_node_type == "master"
       tags:
         - stats
         - apply
