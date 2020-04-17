@@ -1,5 +1,5 @@
 - hosts:
-    - all
+    - masters
 
   tasks:
     - include_tasks:
