@@ -1,0 +1,50 @@
+- hosts:
+    - ceph_mons
+    - masters
+
+  tasks:
+    - name: Gather Ceph cluster facts
+      include_role:
+        name: ceph-client-k8s
+        tasks_from: ceph_facts
+        apply: { tags: [ apply ] }
+      when:
+        - inventory_hostname in groups['ceph_mons']
+      tags:
+        - apply
+
+    - name: Set Ceph cluster facts
+      set_fact:
+        ceph_client_k8s_key: "{{ hostvars[item]._key.stdout | default('') }}"
+        ceph_client_k8s_cid: "{{ hostvars[item]._cid.stdout | default('') }}"
+      when:
+        - inventory_hostname not in groups['ceph_mons']
+        - item in groups['ceph_mons']
+      with_items: "{{ ansible_play_hosts }}"
+      tags:
+        - apply
+
+    - name: Set Ceph servers from host group
+      set_fact:
+        ceph_client_k8s_mons: "{{ groups['ceph_mons'] }}"
+      when:
+        - inventory_hostname in groups['masters']
+        - ceph_client_k8s_mons | default([]) | length < 1
+      tags:
+        - apply
+
+# ---
+
+- hosts:
+    - masters
+
+  tasks:
+    - name: Include role ceph_client_k8s
+      include_role:
+        role: ceph-client-k8s
+        tasks_from: main
+        apply: { tags: [ apply ] }
+      run_once: yes
+      tags:
+        - apply
+  
