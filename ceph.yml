@@ -5,7 +5,7 @@
   tasks:
     - name: Gather Ceph cluster facts
       include_role:
-        name: ceph-client-k8s
+        name: ceph_client_k8s
         tasks_from: ceph_facts
         apply: { tags: [ apply ] }
       when:
@@ -41,7 +41,7 @@
   tasks:
     - name: Include role ceph_client_k8s
       include_role:
-        role: ceph-client-k8s
+        role: ceph_client_k8s
         tasks_from: main
         apply: { tags: [ apply ] }
       run_once: yes
