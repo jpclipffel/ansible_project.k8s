@@ -10,15 +10,8 @@
       tags:
         - always
 
-# ---
 
-- hosts:
-    - masters
-    - workers
-
-  tasks:
-
-    - name: Node type assertions
+    - name: Inventory assertions
       assert:
         that:
           - k8s_node_type is defined and k8s_node_type in [ "master", "worker" ]
@@ -29,7 +22,7 @@
     - name: Setup assertions
       assert:
         that:
-          - k8s_control_plane_endpoint is defined and k8s_control_plane_endpoint is string
+          - k8s_control_plane_endpoint is defined
       tags:
         - setup
 
@@ -60,12 +53,22 @@
         - teardown
 
 
-    - name: Configure Kubernetes service mesh
-      include_role:
-        name: common/k8s_mesh
-      # when:
-      #   - k8s_node_type == "master"
-      tags:
-        - stats
-        - apply
-        - delete
+    # - name: Configure Kubernetes service mesh
+    #   include_role:
+    #     name: common/k8s_mesh
+    #   # when:
+    #   #   - k8s_node_type == "master"
+    #   tags:
+    #     - stats
+    #     - apply
+    #     - delete
+
+
+    - include_role: { name: 'k8s_calico' }
+      when: "'k8s_calico' in k8s_roles"
+      tags: [ apply, delete ]
+
+
+    - include_role: { name: 'k8s_istio' }
+      when: "'k8s_istio' in k8s_roles"
+      tags: [ apply, delete ]
