@@ -23,9 +23,9 @@ The helper tasks list `helper_nodetype.yml` will set the correct node type and h
 
 Those variables applies to all playbooks.
 
-|Variable|Type|Required|Description|
-|--------|----|--------|-----------|
-|`k8s_node_type`|`string`|-|Required if hosts are not located in the groups `masters` or `workers`.|
+| Variable        | Type     | Required | Description                                                             |
+|-----------------|----------|----------|-------------------------------------------------------------------------|
+| `k8s_node_type` | `string` | -        | Required if hosts are not located in the groups `masters` or `workers`. |
 
 ---
 
@@ -44,19 +44,19 @@ This playbook essentialy wraps the following components:
 
 Multiple tags can be used at once (e.g. `setup`, `apply`, `calico`, `istio` to simultaneously setup the cluster and deploy a service mesh).
 
-|Tag|Description|
-|---|-----------|
-|`stats`|Collect and set custom stats|
-|`setup`|Setup (bluids, scales, maintains) a Kubernetes cluster|
-|`teardown`|Teardown a Kubernetes cluster|
-|`apply`|Deploys the K8S **services**|
-|`delete`|Removes the K8S **services**|
+| Tag        | Description                                            |
+|------------|--------------------------------------------------------|
+| `stats`    | Collect and set custom stats                           |
+| `setup`    | Setup (bluids, scales, maintains) a Kubernetes cluster |
+| `teardown` | Teardown a Kubernetes cluster                          |
+| `apply`    | Deploys the K8S **services**                           |
+| `delete`   | Removes the K8S **services**                           |
 
 ### Variables
 
-|Variable|Type|Required|Description|
-|--------|----|--------|-----------|
-|`k8s_control_plane_endpoint`|`string`|Yes|K8S control plane FQDN|
+| Variable                     | Type     | Required | Description            |
+|------------------------------|----------|----------|------------------------|
+| `k8s_control_plane_endpoint` | `string` | Yes      | K8S control plane FQDN |
 
 ---
 
@@ -77,10 +77,10 @@ Deploy and maintains a Consul servers cluster (outside of Kubernetes) and client
 
 The servers and clients components are deployed according to this table:
 
-|Host group|Component|Notes|
-|----------|---------|-----|
-|`masters`|Server (out of K8S)|See section *Inventory setup* for more details regarding host groups and `k8s_node_type` variable|
-|`workers`|Client (within K8S)|See section *Inventory setup* for more details regarding host groups and `k8s_node_type` variable|
+| Host group | Component           | Notes                                                                                             |
+|------------|---------------------|---------------------------------------------------------------------------------------------------|
+| `masters`  | Server (out of K8S) | See section *Inventory setup* for more details regarding host groups and `k8s_node_type` variable |
+| `workers`  | Client (within K8S) | See section *Inventory setup* for more details regarding host groups and `k8s_node_type` variable |
 
 This playbook reuse the following components:
 
@@ -91,20 +91,20 @@ This playbook reuse the following components:
 The role `consul_base` is **always** included and thus the Consul cluster facts are **always** gathered.
 This means that one may invoke the playbook with `apply` withou having to specify the cluster's hosts, key, etc.
 
-|Tag|Description|
-|---|-----------|
-|`setup`|Setup the Consul server cluster|
-|`teardown`|Teardowns the Consul server cluster|
-|`apply`|Deploys the Consul K8S clients|
-|`delete`|Removes the Consul K8S clients|
+| Tag        | Description                         |
+|------------|-------------------------------------|
+| `setup`    | Setup the Consul server cluster     |
+| `teardown` | Teardowns the Consul server cluster |
+| `apply`    | Deploys the Consul K8S clients      |
+| `delete`   | Removes the Consul K8S clients      |
 
 ### Variables
 
-|Variable|Type|Required|Description|
-|--------|----|--------|-----------|
-|`consul_base_cluster_hosts`|`list`|No|List of Consul cluster hosts.<br>Can be automatically deduced by the playbook.|
-|`consul_base_conf_datacenter`|`string`|No|Consul datacenter name.<br>Can be automatically deduced by the playbook.|
-|`consul_base_conf_encrypt`|`string`|No|Consul gossip encryption key.<br>Can be automatically deduced by the playbook.|
+| Variable                      | Type     | Required | Description                                                                    |
+|-------------------------------|----------|----------|--------------------------------------------------------------------------------|
+| `consul_base_cluster_hosts`   | `list`   | No       | List of Consul cluster hosts.<br>Can be automatically deduced by the playbook. |
+| `consul_base_conf_datacenter` | `string` | No       | Consul datacenter name.<br>Can be automatically deduced by the playbook.       |
+| `consul_base_conf_encrypt`    | `string` | No       | Consul gossip encryption key.<br>Can be automatically deduced by the playbook. |
 
 ---
 
@@ -114,19 +114,19 @@ Apply or delete a Kubernetes manifest.
 
 ### Tags
 
-|Tag|Description|
-|---|-----------|
-|`apply`|Applies the provided `manifest`|
-|`delete`|Deletes the given `manigest`|
+| Tag      | Description                     |
+|----------|---------------------------------|
+| `apply`  | Applies the provided `manifest` |
+| `delete` | Deletes the given `manigest`    |
 
 ### Variables
 
 Please note that the playbook **does not asserts** the manifest variables.
 If a variable used in the manifest file is missing, the playbook will fails.
 
-|Variable|Type|Required|Description|
-|--------|----|--------|-----------|
-|`manifest`|`string`, file system path|Yes|Path to manifest template file (should be located under project's `templates/` directory).|
+| Variable   | Type                       | Required | Description                                                                                |
+|------------|----------------------------|----------|--------------------------------------------------------------------------------------------|
+| `manifest` | `string`, file system path | Yes      | Path to manifest template file (should be located under project's `templates/` directory). |
 
 ---
 
@@ -140,7 +140,7 @@ Set the variable `k8s_kubeconfig`.
 
 Ensure that the hosts are located into the correct groups and have the correct `k8s_node_type` variable value.
 
-|Group name|Variable `k8s_node_type`|
-|----------|------------------------|
-|`masters` |`master`                |
-|`workers` |`worker`                |
+| Group name | Variable `k8s_node_type` |
+|------------|--------------------------|
+| `masters`  | `master`                 |
+| `workers`  | `worker`                 |
