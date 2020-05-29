@@ -31,14 +31,7 @@ Those variables applies to all playbooks.
 
 ## Playbook `main.yml`
 
-Deploy and maintains a Kubernetes cluster. It starts by creating or scaling a cluster with the *masters* node. Then, it joins the *workers* nodes to the cluster.
-
-Beside Kubernetes, the playbook will also install *Helm* and the required Python packages to interface with Kubernetes.
-
-This playbook essentialy wraps the following components:
-
-* Role [`k8s_base`](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_base)
-* Role [`k8s_mesh`](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/k8s_mesh)
+Deploy and maintains a Kubernetes cluster. It starts by creating or scaling a cluster with the *masters* node. Then, it joins the *workers* nodes to the cluster. Finally, it will apply all roles defined in variable `k8s_roles`.
 
 ### Tags
 
@@ -127,6 +120,12 @@ If a variable used in the manifest file is missing, the playbook will fails.
 | Variable   | Type                       | Required | Description                                                                                |
 |------------|----------------------------|----------|--------------------------------------------------------------------------------------------|
 | `manifest` | `string`, file system path | Yes      | Path to manifest template file (should be located under project's `templates/` directory). |
+
+--
+
+## Playbook `gitlab.yml`
+
+Integrates a Kubernetes cluster into a GitLab instance group or project.
 
 ---
 

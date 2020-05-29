@@ -1,0 +1,15 @@
+- hosts:
+    - masters
+
+  tasks:
+
+    - include_tasks:
+        file: helper_inventory.yml
+        apply: { tags: [ always ] }
+      tags:
+        - always
+    
+    - include_role:
+        name: k8s_gitlab
+      tags:
+        - always
