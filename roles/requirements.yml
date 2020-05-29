@@ -10,3 +10,8 @@
 - src: git+https://git.dt.ept.lu/iac/ansible/roles/k8s_istio
   version: master
   scm: git
+
+
+- src: git+https://git.dt.ept.lu/iac/ansible/roles/k8s_gitlab
+  version: master
+  scm: git
