@@ -1,17 +1,16 @@
-- src: git+https://git.dt.ept.lu/iac/ansible/roles/common/
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/common/
   version: master
   name: common
   scm: git
 
-- src: git+https://git.dt.ept.lu/iac/ansible/roles/k8s_calico
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_calico
   version: master
   scm: git
 
-- src: git+https://git.dt.ept.lu/iac/ansible/roles/k8s_istio
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_istio
   version: master
   scm: git
 
-
-- src: git+https://git.dt.ept.lu/iac/ansible/roles/k8s_gitlab
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_gitlab
   version: master
   scm: git
