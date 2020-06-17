@@ -1,6 +1,10 @@
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/common/
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/common/
+#   version: master
+#   name: common
+#   scm: git
+
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/docker_base
   version: master
-  name: common
   scm: git
 
 - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_calico
@@ -12,5 +16,17 @@
   scm: git
 
 - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_gitlab
+  version: master
+  scm: git
+
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_helm
+  version: master
+  scm: git
+
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_prometheus
+  version: master
+  scm: git
+
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/ceph_client_k8s
   version: master
   scm: git
