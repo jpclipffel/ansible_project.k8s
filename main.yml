@@ -1,6 +1,6 @@
 - hosts:
-    - masters
-    - workers
+    - k8s_masters
+    - k8s_workers
 
   tasks:
 
@@ -29,8 +29,9 @@
 
     - name: Configure container runtime
       include_role:
-        name: common/docker_base
+        name: docker_base
       tags:
+        - never
         - setup
         - teardown
 
@@ -46,29 +47,35 @@
 
     - name: Configure Kubernetes
       include_role:
-        name: common/k8s_base
+        name: k8s_base
       tags:
+        - never
         - stats
         - setup
         - teardown
 
 
-    # - name: Configure Kubernetes service mesh
-    #   include_role:
-    #     name: common/k8s_mesh
-    #   # when:
-    #   #   - k8s_node_type == "master"
-    #   tags:
-    #     - stats
-    #     - apply
-    #     - delete
+    - name: Configure Helm
+      include_role:
+        name: 'k8s_helm'
+      tags:
+        - never
+        - setup
+        - remove
 
 
     - include_role: { name: 'k8s_calico' }
       when: "'k8s_calico' in k8s_roles"
-      tags: [ apply, delete ]
-
+      tags: [ never, apply, delete ]
 
     - include_role: { name: 'k8s_istio' }
       when: "'k8s_istio' in k8s_roles"
-      tags: [ apply, delete ]
+      tags: [ never, apply, delete ]
+
+    - include_role: { name: 'k8s_prometheus' }
+      when: "'k8s_prometheus' in k8s_roles"
+      tags: [ never, apply, delete ]
+
+    - include_role: { name: 'k8s_gitlab' }
+      when: "'k8s_gitlab' in k8s_roles"
+      tags: [ never, apply, delete ]
