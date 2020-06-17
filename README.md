@@ -11,39 +11,39 @@ This project support two methods to distinguises Kubernetes nodes types.
 * Using host groups (see table bellow)
 * Using host variable `k8s_node_type` (see table bellow)
 
-|Group name|`k8s_node_type`|Description|
-|----------|---------------|-----------|
-|`masters` |`master`       |Kubernetes master node|
-|`workers` |`worker`       |Kubernetes worker node|
-|`deleted` |`delete`       |Node may can be cleaned-up to be removed from cluster or to be transitioned from/to master/worker (see playbook `cleanup.yml`)|
+| Group name    | `k8s_node_type` | Description                             |
+|---------------|-----------------|-----------------------------------------|
+| `k8s_masters` | `master`        | Kubernetes master node                  |
+| `k8s_workers` | `worker`        | Kubernetes worker node                  |
+| `k8s_deleted` | `delete`        | Nodes marked to be removed from cluster |
 
-The helper tasks list `helper_nodetype.yml` will set the correct node type and host group.
+The helper tasks list `helper_inventory.yml` will set the correct node type and host group.
 
 ## Common variables
 
 Those variables applies to all playbooks.
 
-| Variable        | Type     | Required | Description                                                             |
-|-----------------|----------|----------|-------------------------------------------------------------------------|
-| `k8s_node_type` | `string` | -        | Required if hosts are not located in the groups `masters` or `workers`. |
+| Variable        | Type     | Required | Description                                                     |
+|-----------------|----------|----------|-----------------------------------------------------------------|
+| `k8s_node_type` | `string` | No       | Required for nodes not in groups `k8s_masters` or `k8s_workers` |
 
 ---
 
 ## Playbook `main.yml`
 
-Deploy and maintains a Kubernetes cluster. It starts by creating or scaling a cluster with the *masters* node. Then, it joins the *workers* nodes to the cluster. Finally, it will apply all roles defined in variable `k8s_roles`.
+Deplosy and maintains a Kubernetes cluster. It starts by creating or scaling a cluster with the *masters* node. Then, it joins the *workers* nodes to the cluster. Finally, it will apply all roles defined in variable `k8s_roles`.
 
 ### Tags
 
 Multiple tags can be used at once (e.g. `setup`, `apply`, `calico`, `istio` to simultaneously setup the cluster and deploy a service mesh).
 
-| Tag        | Description                                            |
-|------------|--------------------------------------------------------|
-| `stats`    | Collect and set custom stats                           |
-| `setup`    | Setup (bluids, scales, maintains) a Kubernetes cluster |
-| `teardown` | Teardown a Kubernetes cluster                          |
-| `apply`    | Deploys the K8S **services**                           |
-| `delete`   | Removes the K8S **services**                           |
+| Tag        | Description                                                      |
+|------------|------------------------------------------------------------------|
+| `stats`    | Collect and set custom stats                                     |
+| `setup`    | Setup (deploy, scale up, scale down) a Kubernetes cluster        |
+| `remove`   | Remove the Kubernetes cluster                                    |
+| `apply`    | Include the roles specified in `k8s_roles` with the `apply` tag  |
+| `delete`   | Include the roles specified in `k8s_roles` with the `delete` tag |
 
 ### Variables
 
@@ -60,7 +60,7 @@ Remove nodes from cluster and purge them.
 The nodes must either:
 
 * Have their variable `k8s_node_type` set on `delete`
-* Be a member of the group `deleted`
+* Be a member of the group `k8s_deleted`
 
 ---
 
