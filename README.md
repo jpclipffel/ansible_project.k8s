@@ -1,8 +1,6 @@
-# Ansible - Projects - Kubernetes
+# Ansible project - Kubernetes
 
-## Usage
-
-This project contains multiples playbooks and helpers tasks lists. Runnable playbooks are documented in the next sections.
+Ansible project to build and manage Kubernetes clusters.
 
 ## Inventory setup
 
@@ -19,21 +17,26 @@ This project support two methods to distinguises Kubernetes nodes types.
 
 The helper tasks list `helper_inventory.yml` will set the correct node type and host group.
 
-## Common variables
-
-Those variables applies to all playbooks.
-
-| Variable        | Type     | Required | Description                                                     |
-|-----------------|----------|----------|-----------------------------------------------------------------|
-| `k8s_node_type` | `string` | No       | Required for nodes not in groups `k8s_masters` or `k8s_workers` |
-
 ---
 
-## Playbook `main.yml`
+## Playbooks
 
-Deplosy and maintains a Kubernetes cluster. It starts by creating or scaling a cluster with the *masters* node. Then, it joins the *workers* nodes to the cluster. Finally, it will apply all roles defined in variable `k8s_roles`.
+| Playbook       | Description                                            | Ready for AWX |
+|----------------|--------------------------------------------------------|---------------|
+| `main.yml`     | Builds, scales and configures a Kubernetes cluster.    | **Yes**       |
+| `gitlab.yml`   | Add a Kubernetes cluster to a GitLab group or project. | **Yes**       |
+|                |                                                        |               |
+| `cleanup.yml`  |                                                        | No            |
+| `consul.yml`   |                                                        | No            |
+| `manifest.yml` |                                                        | No            |
 
-### Tags
+### Playbook - `main.yml`
+
+Builds, scales and configures a Kubernetes cluster.
+
+The playbook starts by creating or scaling a cluster with the *masters* nodes. Then, it joins the *workers* nodes to the cluster. Finally, it applies all roles defined in variable `k8s_roles`.
+
+#### Tags
 
 Multiple tags can be used at once (e.g. `setup`, `apply`, `calico`, `istio` to simultaneously setup the cluster and deploy a service mesh).
 
@@ -45,15 +48,43 @@ Multiple tags can be used at once (e.g. `setup`, `apply`, `calico`, `istio` to s
 | `apply`    | Include the roles specified in `k8s_roles` with the `apply` tag  |
 | `delete`   | Include the roles specified in `k8s_roles` with the `delete` tag |
 
-### Variables
+#### Roles
 
-| Variable                     | Type     | Required | Description            |
-|------------------------------|----------|----------|------------------------|
-| `k8s_control_plane_endpoint` | `string` | Yes      | K8S control plane FQDN |
+Roles included by default:
+| Role          | Documentation                                                 |
+|---------------|---------------------------------------------------------------|
+| `docker_base` | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/docker_base |
+| `k8s_base`    | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_base    |
+| `k8s_helm`    | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_helm    |
+
+Optional roles, included with `k8s_roles`:
+
+| Role             | Documentation                                                    |
+|------------------|------------------------------------------------------------------|
+| `k8s_calico`     | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_calico     |
+| `k8s_istio`      | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_istio      |
+| `k8s_prometheus` | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_prometheus |
+
+#### Variables
+
+| Variable                     | Type     | Required | Default | Description                            |
+|------------------------------|----------|----------|---------|----------------------------------------|
+| `k8s_control_plane_endpoint` | `string` | Yes      |         | Cluster endpoint (URL)                 |
+| `k8s_roles`                  | `list`   | No       |         | Optional roles to apply on the cluster |
 
 ---
 
-## Playbook `cleanup.yml`
+### Playbook - `gitlab.yml`
+
+Add a Kubernetes cluster to a GitLab group or project.
+
+| Role         | Documentation                                                |
+|--------------|--------------------------------------------------------------|
+| `k8s_gitlab` | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_gitlab |
+
+---
+
+### Playbook - `cleanup.yml`
 
 Remove nodes from cluster and purge them.
 
@@ -64,7 +95,7 @@ The nodes must either:
 
 ---
 
-## Playbook `consul.yml`
+### Playbook - `consul.yml`
 
 Deploy and maintains a Consul servers cluster (outside of Kubernetes) and clients (inside Kubernetes).
 
@@ -79,7 +110,7 @@ This playbook reuse the following components:
 
 * Role [`consul_base`](https://git.dt.ept.lu/jpclipffel/awxlab-roles-common/tree/master/consul_base)
 
-### Tags
+#### Tags
 
 The role `consul_base` is **always** included and thus the Consul cluster facts are **always** gathered.
 This means that one may invoke the playbook with `apply` withou having to specify the cluster's hosts, key, etc.
@@ -91,7 +122,7 @@ This means that one may invoke the playbook with `apply` withou having to specif
 | `apply`    | Deploys the Consul K8S clients      |
 | `delete`   | Removes the Consul K8S clients      |
 
-### Variables
+#### Variables
 
 | Variable                      | Type     | Required | Description                                                                    |
 |-------------------------------|----------|----------|--------------------------------------------------------------------------------|
@@ -101,18 +132,18 @@ This means that one may invoke the playbook with `apply` withou having to specif
 
 ---
 
-## Playbook `manifest.yml`
+### Playbook - `manifest.yml`
 
 Apply or delete a Kubernetes manifest.
 
-### Tags
+#### Tags
 
 | Tag      | Description                     |
 |----------|---------------------------------|
 | `apply`  | Applies the provided `manifest` |
 | `delete` | Deletes the given `manigest`    |
 
-### Variables
+#### Variables
 
 Please note that the playbook **does not asserts** the manifest variables.
 If a variable used in the manifest file is missing, the playbook will fails.
@@ -121,21 +152,15 @@ If a variable used in the manifest file is missing, the playbook will fails.
 |------------|----------------------------|----------|--------------------------------------------------------------------------------------------|
 | `manifest` | `string`, file system path | Yes      | Path to manifest template file (should be located under project's `templates/` directory). |
 
---
-
-## Playbook `gitlab.yml`
-
-Integrates a Kubernetes cluster into a GitLab instance group or project.
-
 ---
 
-## Tasks list `helper_kubeconfig.yml`
+### Helper - `helper_kubeconfig.yml`
 
 Set the variable `k8s_kubeconfig`.
 
 ---
 
-## Tasks list `helper_inventory.yml`
+## Helper - `helper_inventory.yml`
 
 Ensure that the hosts are located into the correct groups and have the correct `k8s_node_type` variable value.
 
