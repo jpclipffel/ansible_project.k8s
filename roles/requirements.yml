@@ -7,6 +7,10 @@
   version: master
   scm: git
 
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_base
+  version: master
+  scm: git
+
 - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_calico
   version: master
   scm: git
