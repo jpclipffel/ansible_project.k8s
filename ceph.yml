@@ -1,3 +1,6 @@
+# Kubernetes - Ceph
+# Setup a Ceph StorageClass on a Kubernetes cluster.
+
 - hosts:
     - ceph_mons
     - k8s_masters

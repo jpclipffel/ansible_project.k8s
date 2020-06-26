@@ -25,6 +25,7 @@ The helper tasks list `helper_inventory.yml` will set the correct node type and 
 |----------------|--------------------------------------------------------|---------------|
 | `main.yml`     | Builds, scales and configures a Kubernetes cluster.    | **Yes**       |
 | `gitlab.yml`   | Add a Kubernetes cluster to a GitLab group or project. | **Yes**       |
+| `ceph.yml`     | Setup a Ceph `StorageClass` on a Kubernetes cluster.   | **Yes**       |
 |                |                                                        |               |
 | `cleanup.yml`  |                                                        | No            |
 | `consul.yml`   |                                                        | No            |
@@ -81,6 +82,16 @@ Add a Kubernetes cluster to a GitLab group or project.
 | Role         | Documentation                                                |
 |--------------|--------------------------------------------------------------|
 | `k8s_gitlab` | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_gitlab |
+
+---
+
+### Playbook - `ceph.yml`
+
+Setup a Ceph `StorageClass` on a Kubernetes cluster.
+
+| Role              | Documentation                                                     |
+|-------------------|-------------------------------------------------------------------|
+| `ceph_client_k8s` | https://git.dt.ept.lu/ict-infra/iac/ansible/roles/ceph_client_k8s |
 
 ---
 
