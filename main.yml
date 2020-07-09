@@ -67,18 +67,25 @@
         - remove
 
 
+    # === CNI ===
     - include_role: { name: 'k8s_calico' }
       when: "'k8s_calico' in k8s_roles"
       tags: [ never, apply, delete ]
 
+
+    # === Mesh ===
     - include_role: { name: 'k8s_istio' }
       when: "'k8s_istio' in k8s_roles"
       tags: [ never, apply, delete ]
 
+
+    # === Base applications ===
     - include_role: { name: 'k8s_prometheus' }
       when: "'k8s_prometheus' in k8s_roles"
       tags: [ never, apply, delete ]
 
+
+    # === External integration ===
     - include_role: { name: 'k8s_gitlab' }
       when: "'k8s_gitlab' in k8s_roles"
       tags: [ never, apply, delete ]
