@@ -10,34 +10,27 @@
     - include_tasks:
         file: helper_inventory.yml
         apply: { tags: [ always ] }
-      tags:
-        - always
+      tags: [always]
 
 
     - name: Inventory assertions
       assert:
         that:
           - k8s_node_type is defined and k8s_node_type in [ "master", "worker" ]
-      tags:
-        - always
+      tags: [always]
 
 
     - name: Setup assertions
       assert:
         that:
           - k8s_control_plane_endpoint is defined
-      tags:
-        - setup
+      tags: [setup]
 
 
     - name: Configure container runtime
       include_role:
         name: docker_base
-      tags:
-        - never
-        - setup
-        - teardown
-
+      tags: [never, setup, teardown]
 
     - name: Set facts from playbook variables
       set_fact:
@@ -51,25 +44,24 @@
     - name: Configure Kubernetes
       include_role:
         name: k8s_base
-      tags:
-        - never
-        - stats
-        - setup
-        - teardown
+      tags: [never, stats, setup, teardown]
 
 
     - name: Configure Helm
       include_role:
         name: 'k8s_helm'
-      tags:
-        - never
-        - setup
-        - remove
+      tags: [never, setup, remove]
 
 
     # === CNI ===
     - include_role: { name: 'k8s_calico' }
       when: "'k8s_calico' in k8s_roles"
+      tags: [ never, apply, delete ]
+
+
+    # === Load balancer ===
+    - include_role: { name: 'k8s_metallb' }
+      when: "'k8s_metallb' in k8s_roles"
       tags: [ never, apply, delete ]
 
 
@@ -82,7 +74,7 @@
     # === Base applications ===
     - include_role: { name: 'k8s_prometheus' }
       when: "'k8s_prometheus' in k8s_roles"
-      tags: [ never, apply, delete ]
+      tags: [ never, apply, delete, debug ]
 
 
     # === External integration ===
