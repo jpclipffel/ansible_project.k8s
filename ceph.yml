@@ -47,11 +47,13 @@
     - k8s_masters
 
   tasks:
+
+    - include_tasks:
+        file: helper_inventory.yml
+        apply: { tags: [ always ] }
+      tags: [always]
+
     - name: Include role ceph_client_k8s
       include_role:
         role: ceph_client_k8s
-      run_once: yes
-      tags:
-        - never
-        - apply
-  
+      tags: [never, apply, delete]
