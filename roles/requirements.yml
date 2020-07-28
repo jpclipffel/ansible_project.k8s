@@ -15,6 +15,14 @@
   version: master
   scm: git
 
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_metrics-server
+  version: master
+  scm: git
+
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_metallb
+  version: master
+  scm: git
+
 - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_istio
   version: master
   scm: git
