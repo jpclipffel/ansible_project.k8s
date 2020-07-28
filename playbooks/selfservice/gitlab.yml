@@ -7,7 +7,7 @@
   tasks:
 
     - include_tasks:
-        file: helper_inventory.yml
+        file: helpers/inventory.yml
         apply: { tags: [ always ] }
       tags:
         - always

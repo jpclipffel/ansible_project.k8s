@@ -6,8 +6,8 @@
         file: "{{ __item }}"
         apply: { tags: [ always ] }
       with_items:
-        - helper_inventory.yml
-        - helper_kubeconfig.yml
+        - helpers/inventory.yml
+        - helpers/kubeconfig.yml
       loop_control:
         loop_var: __item
       tags:

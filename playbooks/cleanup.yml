@@ -5,7 +5,7 @@
   tasks:
 
     - include_tasks:
-        file: helper_inventory.yml
+        file: helpers/inventory.yml
         apply: { tags: [ always ] }
       tags:
         - always
@@ -51,22 +51,13 @@
         - _delete_node.rc != 0 and "(NotFound)" not in _delete_node.stderr 
       when:
         - hostvars[item].k8s_node_type == "delete"
-      with_items: "{{ ansible_play_hosts }}"
+      with_items: "{{ ansible_play_hosts }}"    
 
-
-    # - name: Reset node
-    #   shell: >
-    #     kubeadm reset -f
-    #   when:
-    #     - k8s_node_type == "delete"
-    
 
     - name: Reset node
       include_role:
-        name: common/k8s_base
+        name: k8s_base
         apply:
-          tags:
-            - teardown
-            - remove
+          tags: [teardown, remove]
       when:
         - k8s_node_type == "delete"

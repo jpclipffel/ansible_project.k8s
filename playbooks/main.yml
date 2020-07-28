@@ -8,7 +8,7 @@
   tasks:
 
     - include_tasks:
-        file: helper_inventory.yml
+        file: helpers/inventory.yml
         apply: { tags: [ always ] }
       tags: [always]
 
@@ -53,25 +53,23 @@
       tags: [never, setup, remove]
 
 
-    # === CNI ===
+    # === Clusters components ===
     - include_role: { name: 'k8s_calico' }
       when: "'k8s_calico' in k8s_roles"
       tags: [ never, apply, delete ]
 
+    - include_role: { name: 'k8s_metrics-server' }
+      when: "'k8s_metrics-server' in k8s_roles"
+      tags: [ never, apply, delete ]
 
-    # === Load balancer ===
     - include_role: { name: 'k8s_metallb' }
       when: "'k8s_metallb' in k8s_roles"
       tags: [ never, apply, delete ]
 
-
-    # === Mesh ===
     - include_role: { name: 'k8s_istio' }
       when: "'k8s_istio' in k8s_roles"
       tags: [ never, apply, delete ]
 
-
-    # === Base applications ===
     - include_role: { name: 'k8s_prometheus' }
       when: "'k8s_prometheus' in k8s_roles"
       tags: [ never, apply, delete, debug ]
