@@ -32,6 +32,7 @@
         name: docker_base
       tags: [never, setup, teardown]
 
+
     - name: Set facts from playbook variables
       set_fact:
         k8s_base_node_type: "{{ k8s_node_type }}"

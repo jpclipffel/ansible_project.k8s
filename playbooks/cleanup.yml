@@ -1,6 +1,6 @@
 - hosts:
-    - masters
-    - workers
+    - k8s_masters
+    - k8s_deleted
 
   tasks:
 
@@ -10,28 +10,21 @@
       tags:
         - always
 
-# ---
 
-- hosts:
-    - masters
-    - deleted
-
-  tasks:
-
-    - name: Select primary master
-      set_fact:
-        primary_master: "{{ inventory_hostname }}"
-      delegate_to: localhost
-      run_once: yes
-      when:
-        - hostvars[item].k8s_node_type == "master"
-      with_items: "{{ ansible_play_hosts }}"
+    # - name: Select primary master
+    #   set_fact:
+    #     primary_master: "{{ inventory_hostname }}"
+    #   delegate_to: localhost
+    #   run_once: yes
+    #   when:
+    #     - hostvars[item].k8s_node_type == "master"
+    #   with_items: "{{ ansible_play_hosts }}"
 
 
     - name: Drain node
       shell: >
         kubectl drain {{ hostvars[item].ansible_hostname }} --ignore-daemonsets --delete-local-data
-      delegate_to: "{{ primary_master }}"
+      delegate_to: "{{ k8s_primary_master_name }}"
       run_once: yes
       register: _drain_node
       failed_when:

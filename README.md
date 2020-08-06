@@ -2,9 +2,76 @@
 
 Ansible project to build and manage Kubernetes clusters.
 
+## How to
+
+### How do I deploy a cluster ?
+
+> This instructions assumes that you have already onboarded your servers into Ansible.
+
+* Onboard the servers into an Ansible inventory in the correct groups:
+  * `k8s_masters`
+  * `k8s_workers`
+* Provide (at least) the minimal cluster configuration in the Ansible inventory variables file.
+
+  Example inventory structure:
+
+  ```
+  ../inventories/your_k8s/        # Inventory directory
+  |
+  \__ hosts                       # List of hosts in their groups
+  |
+  \__ group_vars/                 # Inventory variables files directory
+      |
+      \__ k8s.yml                 # Kubernetes cluster configuration
+  ```
+
+  Example `hosts` contents:
+
+  ```yaml
+  all:
+    children:
+      # Kubernetes cluster
+      # Reference: group_vars/k8s.yml
+      k8s:
+        children:
+          k8s_masters:
+            hosts:
+              k8s-master-01.tld:
+              k8s-master-02.tld:
+              k8s-master-03.tld:
+          k8s_workers:
+            hosts:
+              k8s-worker-01.tld:
+              k8s-worker-02.tld:
+              k8s-worker-03.tld:
+              k8s-worker-04.tld:
+  ```
+
+  Example of a minimal `group_vars/k8s.yml` contents:
+
+  ```yaml
+  k8s_control_plane_endpoint: "k8s-master.tld"    # This must resolve to one of the master node (e.g. VIP, load balancer)
+  k8s_roles:                                      # Deploy at least a CNI on the cluster (e.g. Calico)
+    - k8s_calico
+  ```
+
+* Run the playbook `main.yml` with the `setup` and `apply` tags: `ansible-playbook -i <inventory> playbooks/main.yml --tags 'setup,apply'` 
+
+### How do I add a node (master or worker) ?
+
+Add the node(s) in the inventory, in the group `k8s_masters` or `k8s_workers`.
+Then, re-run the playbook `main.yml` while adding the tag `setup`: `ansible-playbook -i <inventory> playbooks/main.yml --tags 'setup'`
+
+### How do I remove a node (master or worker) ?
+
+Move the node(s) to remove to the group `k8s_deleted` in the inventory. You can create the group if id doesn't already exists.
+Then run the playbook `cleanup.yml`: `ansible-playbook -i <inventory> playbooks/cleanup.yml`
+
+---
+
 ## Inventory setup
 
-This project support two methods to distinguises Kubernetes nodes types.
+This project support two methods to distinguish the Kubernetes nodes types.
 
 * Using host groups (see table bellow)
 * Using host variable `k8s_node_type` (see table bellow)
@@ -15,7 +82,7 @@ This project support two methods to distinguises Kubernetes nodes types.
 | `k8s_workers` | `worker`        | Kubernetes worker node                  |
 | `k8s_deleted` | `delete`        | Nodes marked to be removed from cluster |
 
-The helper tasks list `helper_inventory.yml` will set the correct node type and host group.
+The helper playbook `helpers/inventory.yml` will set the correct node type and host group.
 
 ---
 
@@ -26,14 +93,15 @@ The helper tasks list `helper_inventory.yml` will set the correct node type and 
 | `main.yml`               | Builds, scales and configures a Kubernetes cluster.    | Yes           |
 | `ceph.yml`               | Setup a Ceph `StorageClass` on a Kubernetes cluster.   | Yes           |
 | `cleanup.yml`            | Remove one or more nodes from a Kubernetes cluster.    | No            |
-| `selfservice/consul.yml` | Deploy Consul on a LKubernetes cluster.                | No            |
+| `selfservice/consul.yml` | Deploy Consul on a Kubernetes cluster.                 | No            |
 | `selservice/gitlab.yml`  | Add a Kubernetes cluster to a GitLab group or project. | Yes           |
 
 ### Playbook - `main.yml`
 
-Builds, scales and configures a Kubernetes cluster.
+Builds, configures and scales a Kubernetes cluster.
 
 The playbook starts by creating or scaling a cluster with the *masters* nodes. Then, it joins the *workers* nodes to the cluster. Finally, it applies all roles defined in variable `k8s_roles`.
+You can avoid setting-up the cluster by running the playbook with only the `apply` or `delete` tag (see tags specifications bellow).
 
 #### Tags
 
