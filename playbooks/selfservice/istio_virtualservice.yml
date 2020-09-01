@@ -1,0 +1,46 @@
+# Istio - Virtual Service
+# Create or delete an Istio Virtual Service.
+
+- hosts:
+    - k8s_masters
+
+  tasks:
+
+    - include_tasks:
+        file: helper_inventory.yml
+        apply: { tags: [ always ] }
+      tags:
+        - always
+
+
+    - name: Inventory assertions
+      assert:
+        that:
+          - k8s_node_type is defined and k8s_node_type in [ "master", "worker" ]
+      tags:
+        - always
+
+
+    - name: Create the VirtualService
+      k8s:
+        state: present
+        definition: "{{ lookup('template', 'istio/virtualservice.yml') }}"
+      when:
+        - inventory_hostname == k8s_primary_master_name
+      tags:
+        - never
+        - apply
+
+
+    - name: Delete the VirtualService
+      k8s:
+        state: absent
+        name: "{{ k8s_istio_vs_name }}"
+        kind: "VirtualService"
+        namespace: "{{ k8s_istio_vs_namespace | default('default') }}"
+        api_version: "{{ k8s_istio_vs_apiVersion | default('v1alpha3') }}"
+      when:
+        - inventory_hostname == k8s_primary_master_name
+      tags:
+        - never
+        - delete

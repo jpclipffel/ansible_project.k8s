@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/{{ k8s_istio_vs_apiVersion | default('v1alpha3') }}
+kind: VirtualService
+metadata:
+  name: {{ k8s_istio_vs_name }}
+  namespace: {{ k8s_istio_vs_namespace | default("default") }}
+spec:
+  hosts:
+{% for host in k8s_istio_vs_hosts | default(["*", ]) %}
+   - "{{ host }}"
+{% endfor %}
+
+  gateways:
+  - {{ k8s_istio_vs_gateway | default("istio-system/istio-gateway") }}
+  http:
+  - route:
+    - destination:
+        host: {{ k8s_istio_vs_dest_host }}
+        port:
+          number: {{ k8s_istio_vs_dest_port }}
+{% if k8s_istio_vs_uri_prefix | default('') | length > 0 %}
+    match:
+    - uri:
+        prefix: "{{ k8s_prometheus_server_prefixURL }}"
+{% endif %}
