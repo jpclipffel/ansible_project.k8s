@@ -1,3 +1,6 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+
+
 # K8S - Main
 # Builds, scales and configures a Kubernetes cluster.
 
@@ -59,6 +62,14 @@
       when: "'k8s_calico' in k8s_roles"
       tags: [ never, apply, delete ]
 
+    - include_role: { name: 'k8s_csi-rbd' }
+      when: "'k8s_csi-rbd' in k8s_roles"
+      tags: [ never, apply, delete ]
+
+    - include_role: { name: 'k8s_volsnap' }
+      when: "'k8s_volsnap' in k8s_roles"
+      tags: [ never, apply, delete ]
+
     - include_role: { name: 'k8s_metrics-server' }
       when: "'k8s_metrics-server' in k8s_roles"
       tags: [ never, apply, delete ]
@@ -77,6 +88,11 @@
 
 
     # === External integration ===
+
+    # - include_role: { name: 'ceph_client_k8s' }
+    #   when: "'ceph_client_k8s' in k8s_roles"
+    #   tags: [ never, apply, delete ]
+
     - include_role: { name: 'k8s_gitlab' }
       when: "'k8s_gitlab' in k8s_roles"
       tags: [ never, apply, delete ]
