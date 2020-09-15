@@ -82,19 +82,19 @@ This project support two methods to distinguish the Kubernetes nodes types.
 | `k8s_workers` | `worker`        | Kubernetes worker node                  |
 | `k8s_deleted` | `delete`        | Nodes marked to be removed from cluster |
 
-The helper playbook `helpers/inventory.yml` will set the correct node type and host group.
+The helper playbook `playbooks/helpers/inventory.yml` will set the correct node type and host group.
 
 ---
 
 ## Playbooks
 
-| Playbook                 | Description                                            | Ready for AWX |
-|--------------------------|--------------------------------------------------------|---------------|
-| `main.yml`               | Builds, scales and configures a Kubernetes cluster.    | Yes           |
-| `ceph.yml`               | Setup a Ceph `StorageClass` on a Kubernetes cluster.   | Yes           |
-| `cleanup.yml`            | Remove one or more nodes from a Kubernetes cluster.    | No            |
-| `selfservice/consul.yml` | Deploy Consul on a Kubernetes cluster.                 | No            |
-| `selservice/gitlab.yml`  | Add a Kubernetes cluster to a GitLab group or project. | Yes           |
+| Playbook                           | Description                                            | Ready for AWX |
+|------------------------------------|--------------------------------------------------------|---------------|
+| `playbooks/main.yml`               | Builds, scales and configures a Kubernetes cluster.    | Yes           |
+| `playbooks/ceph.yml`               | Setup a Ceph `StorageClass` on a Kubernetes cluster.   | Yes           |
+| `playbooks/cleanup.yml`            | Remove one or more nodes from a Kubernetes cluster.    | No            |
+| `playbooks/selfservice/consul.yml` | Deploy Consul on a Kubernetes cluster.                 | No            |
+| `playbooks/selservice/gitlab.yml`  | Add a Kubernetes cluster to a GitLab group or project. | Yes           |
 
 ### Playbook - `main.yml`
 
