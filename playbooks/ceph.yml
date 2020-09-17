@@ -1,3 +1,6 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+
+
 # Kubernetes - Ceph
 # Setup a Ceph StorageClass on a Kubernetes cluster.
 
@@ -6,6 +9,7 @@
     - k8s_masters
 
   tasks:
+
     - name: Gather Ceph cluster facts
       include_role:
         name: ceph_client_k8s
@@ -13,9 +17,7 @@
         apply: { tags: [ apply ] }
       when:
         - inventory_hostname in groups['ceph_mons']
-      tags:
-        - never
-        - apply
+      tags: [never, apply]
 
 
     - name: Set Ceph cluster facts
@@ -26,9 +28,7 @@
         - inventory_hostname not in groups['ceph_mons']
         - item in groups['ceph_mons']
       with_items: "{{ ansible_play_hosts }}"
-      tags:
-        - never
-        - apply
+      tags: [never, apply]
 
 
     - name: Set Ceph servers from host group
@@ -37,9 +37,7 @@
       when:
         - inventory_hostname in groups['k8s_masters']
         - ceph_client_k8s_mons | default([]) | length < 1
-      tags:
-        - never
-        - apply
+      tags: [never, apply]
 
 # ---
 
@@ -51,9 +49,9 @@
     - include_tasks:
         file: helpers/inventory.yml
         apply: { tags: [ always ] }
-      tags: [always]
+      tags: [never, apply]
 
-    - name: Include role ceph_client_k8s
-      include_role:
+
+    - include_role:
         role: ceph_client_k8s
-      tags: [never, apply, delete]
+      tags: [never, apply]
