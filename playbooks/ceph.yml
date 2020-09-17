@@ -55,10 +55,10 @@
     # Set the list of Ceph monitors from a commas-separated string.
     # Useful when called from AWX or CLI.
     - set_fact:
-        ceph_client_k8s_mons: "{{ ceph_client_k8s_mons.split(',') | list }}"
+        ceph_client_k8s_mons: "{{ ceph_mons.split(',') | list }}"
       when:
-        - ceph_client_k8s_mons is defined
-        - ceph_client_k8s_mons is string
+        - ceph_mons is defined
+        - ceph_mons is string
       tags: [never, apply]
 
 
