@@ -62,6 +62,10 @@
       when: "'k8s_calico' in k8s_roles"
       tags: [ never, apply, delete ]
 
+    - include_role: { name: 'k8s_cpi-vsphere' }
+      when: "'k8s_cpi-vsphere' in k8s_roles"
+      tags: [ never, apply, delete ]
+
     - include_role: { name: 'k8s_csi-rbd' }
       when: "'k8s_csi-rbd' in k8s_roles"
       tags: [ never, apply, delete ]
