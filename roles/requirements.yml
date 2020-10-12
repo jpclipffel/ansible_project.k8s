@@ -46,6 +46,10 @@
   version: master
   scm: git
 
+- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_argocd
+  version: master
+  scm: git
+
 - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/ceph_client_k8s
   version: master
   scm: git

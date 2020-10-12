@@ -90,6 +90,10 @@
       when: "'k8s_prometheus' in k8s_roles"
       tags: [ never, apply, delete, debug ]
 
+    - include_role: { name: 'k8s_argocd' }
+      when: "'k8s_argocd' in k8s_roles"
+      tags: [ never, apply, delete, debug ]
+
 
     # === External integration ===
 
