@@ -1,3 +1,5 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+
 # Host group and node type resolution
 #
 # We support two methods to categorize nodes (masters or workers):
@@ -63,7 +65,7 @@
   delegate_to: localhost
   run_once: yes
   when:
-    - hostvars[item].k8s_node_type == "master"
+    - hostvars[item].k8s_node_type | default('') == "master"
     - k8s_primary_master_name is not defined or k8s_primary_master_name | length < 1
   with_items: "{{ ansible_play_hosts }}"
   tags:
