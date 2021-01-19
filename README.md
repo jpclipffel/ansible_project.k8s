@@ -20,12 +20,50 @@ foundation or core:
 
 Whats happening at the ecosystem level is out of scope of this project.
 
+---
+
+## Playbooks
+
+This project provides several playbooks.
+
+| Playbook                           | Description                                            | Ready for AWX | Documentation                     |
+|------------------------------------|--------------------------------------------------------|---------------|-----------------------------------|
+| `playbooks/main.yml`               | Builds, scales and configures a Kubernetes cluster.    | Yes           | [Link](docs/playbooks/main.md)    |
+| `playbooks/ceph.yml`               | Setup a Ceph `StorageClass` on a Kubernetes cluster.   | Yes           | [Link](docs/playbooks/ceph.md)    |
+| `playbooks/gitlab.yml`             | Add a Kubernetes cluster to a GitLab group or project. | Yes           | [Link](docs/playbooks/gitlab.md)  |
+| `playbooks/restart.yml`            | Restart a Kubernetes cluster.                          | Yes           | [Link](docs/playbooks/restart.md) |
+| `playbooks/cleanup.yml`            | Remove one or more nodes from a Kubernetes cluster.    | No            | [Link](docs/playbooks/cleanup.md) |
+
+---
+
+## Inventory setup
+
+This project support two methods to distinguish the Kubernetes nodes types:
+
+* Using the hosts groups (see table bellow)
+* Using the hosts variables `k8s_node_type` (see table bellow)
+
+| Group name    | `k8s_node_type` | Description                             |
+|---------------|-----------------|-----------------------------------------|
+| `k8s_masters` | `master`        | Kubernetes master node                  |
+| `k8s_workers` | `worker`        | Kubernetes worker node                  |
+| `k8s_deleted` | `delete`        | Nodes marked to be removed from cluster |
+
+The helper playbook `playbooks/helpers/inventory.yml` set the correct node type
+and host group.
+
+---
+
 ## How to
 
-### How do I deploy a cluster ?
+### How do I (re)deploy a cluster ?
 
 > These instructions assumes that you have already onboarded your
   servers into Ansible.
+
+> Take a look at the [5 minutes deployment guide](docs/5-minutes-deployment.md)
+
+> Take a look at the [inventory guide](docs/inventory.md)
 
 * Onboard the servers into an Ansible inventory in the correct groups:
   * `k8s_masters`
@@ -37,11 +75,8 @@ Whats happening at the ecosystem level is out of scope of this project.
 
   ```
   ../inventories/your_k8s/        # Inventory directory
-  |
   \__ hosts                       # List of hosts in their groups
-  |
   \__ group_vars/                 # Inventory variables files directory
-      |
       \__ k8s.yml                 # Kubernetes cluster configuration
   ```
 
@@ -103,169 +138,7 @@ Whats happening at the ecosystem level is out of scope of this project.
 
 ---
 
-## Inventory setup
 
-This project support two methods to distinguish the Kubernetes nodes types:
-
-* Using the hosts groups (see table bellow)
-* Using the hosts variables `k8s_node_type` (see table bellow)
-
-| Group name    | `k8s_node_type` | Description                             |
-|---------------|-----------------|-----------------------------------------|
-| `k8s_masters` | `master`        | Kubernetes master node                  |
-| `k8s_workers` | `worker`        | Kubernetes worker node                  |
-| `k8s_deleted` | `delete`        | Nodes marked to be removed from cluster |
-
-The helper playbook `playbooks/helpers/inventory.yml` set the correct node type
-and host group.
 
 ---
 
-## Playbooks
-
-| Playbook                           | Description                                            | Ready for AWX |
-|------------------------------------|--------------------------------------------------------|---------------|
-| `playbooks/main.yml`               | Builds, scales and configures a Kubernetes cluster.    | Yes           |
-| `playbooks/ceph.yml`               | Setup a Ceph `StorageClass` on a Kubernetes cluster.   | Yes           |
-| `playbooks/cleanup.yml`            | Remove one or more nodes from a Kubernetes cluster.    | No            |
-| `playbooks/selfservice/consul.yml` | Deploy Consul on a Kubernetes cluster.                 | No            |
-| `playbooks/selservice/gitlab.yml`  | Add a Kubernetes cluster to a GitLab group or project. | Yes           |
-
----
-
-### Playbook - `main.yml`
-
-Builds, configures and scales a Kubernetes cluster.
-
-The playbook starts by creating or scaling a cluster with the *masters* nodes.
-Then, it joins the *workers* nodes to the cluster. Finally, it applies all
-roles defined in variable `k8s_roles`.
-
-You can avoid setting-up the cluster by running the playbook with only the
-`apply` or `delete` tag (see tags specifications bellow).
-
-#### Tags
-
-| Tag        | Description                                                      |
-|------------|------------------------------------------------------------------|
-| `stats`    | Collect and set custom stats                                     |
-| `setup`    | Setup (deploy, scale up, scale down) a Kubernetes cluster        |
-| `remove`   | Remove the Kubernetes cluster                                    |
-| `apply`    | Include the roles specified in `k8s_roles` with the `apply` tag  |
-| `delete`   | Include the roles specified in `k8s_roles` with the `delete` tag |
-
-#### Roles
-
-Roles included by default:
-| Role          | Description           |
-|---------------|-----------------------|
-| `docker_base` | Docker runtime        |
-| `k8s_base`    | Kubernetes deployment |
-| `k8s_helm`    | Helm deployment       |
-
-Optional roles, to be added in `k8s_roles`:
-
-| Role                 | Description                    |
-|----------------------|--------------------------------|
-| `k8s_calico`         | Calico CNI                     |
-| `k8s_csi-rbd`        | Ceph CSI                       |
-| `k8s_volsnap`        | K8S volume snapshot controller |
-| `k8s_metrics-server` | K8S metrics server             |
-| `k8s_metallb`        | MetalLB load balancer          |
-| `k8s_istio`          | Istion service mesh            |
-| `k8s_prometheus`     | Prometheus metrics collector   |
-| `k8s_argocd`         | ArgoCD server                  |
-
-#### Variables
-
-| Variable                     | Type     | Required | Default           | Description                            |
-|------------------------------|----------|----------|-------------------|----------------------------------------|
-| `k8s_control_plane_endpoint` | `string` | Yes      |                   | Cluster endpoint (URL)                 |
-| `k8s_roles`                  | `list`   | No       | `[]` (empty list) | Optional roles to apply on the cluster |
-
----
-
-### Playbook - `restart.yml`
-
-Cleanly restart a Kubernetes cluster.
-
-This playbook runs on each node **one by one**:
-
-* Drain (*cordon*) the node if its a worker node
-* Stop the `kubelet` service
-* Restart the `docker` service
-* Start the `kubelet` service
-* Uncordon (*un-drain*) the node if its a worker node
-
-#### Skip tags
-
-One can exclude a node type by specifying it in `--skip-tags`:
-
-| Tag      | Description              |
-|----------|--------------------------|
-| `master` | Exclude all master nodes |
-| `worker` | Exclude all worker nodes |
-
----
-
-### Playbook - `ceph.yml`
-
-Setup a Ceph `StorageClass` on a Kubernetes cluster.
-
-| Role              | Description                      |
-|-------------------|----------------------------------|
-| `ceph_client_k8s` | Manage a Ceph RBD `StorageClass` |
-
----
-
-### Playbook - `cleanup.yml`
-
-Remove nodes from cluster and purge them.
-
-The nodes must either:
-
-* Have their variable `k8s_node_type` set on `delete`
-* Be a member of the group `k8s_deleted`
-
----
-
-### Playbook - `selservice/gitlab.yml`
-
-Add a Kubernetes cluster to a GitLab group or project.
-
-| Role         | Description                                             |
-|--------------|---------------------------------------------------------|
-| `k8s_gitlab` | Add or remove a cluster to a GitLab instance or project |
-
----
-
-### Playbook - `selfservice/consul.yml`
-
-Deploy and maintains a Consul servers cluster (outside of Kubernetes) and clients (inside Kubernetes).
-
-The servers and clients components are deployed according to this table:
-
-| Host group | Component           | Notes                                                                                             |
-|------------|---------------------|---------------------------------------------------------------------------------------------------|
-| `masters`  | Server (out of K8S) | See section *Inventory setup* for more details regarding host groups and `k8s_node_type` variable |
-| `workers`  | Client (within K8S) | See section *Inventory setup* for more details regarding host groups and `k8s_node_type` variable |
-
-#### Tags
-
-The role `consul_base` is **always** included and thus the Consul cluster facts are **always** gathered.
-This means that one may invoke the playbook with `apply` withou having to specify the cluster's hosts, key, etc.
-
-| Tag        | Description                         |
-|------------|-------------------------------------|
-| `setup`    | Setup the Consul server cluster     |
-| `teardown` | Teardowns the Consul server cluster |
-| `apply`    | Deploys the Consul K8S clients      |
-| `delete`   | Removes the Consul K8S clients      |
-
-#### Variables
-
-| Variable                      | Type     | Required | Description                                                                    |
-|-------------------------------|----------|----------|--------------------------------------------------------------------------------|
-| `consul_base_cluster_hosts`   | `list`   | No       | List of Consul cluster hosts.<br>Can be automatically deduced by the playbook. |
-| `consul_base_conf_datacenter` | `string` | No       | Consul datacenter name.<br>Can be automatically deduced by the playbook.       |
-| `consul_base_conf_encrypt`    | `string` | No       | Consul gossip encryption key.<br>Can be automatically deduced by the playbook. |

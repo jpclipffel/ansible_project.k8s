@@ -10,7 +10,7 @@ Kubernetes clusters are mapped in Ansible inventories. The typical inventory str
     \__ vmware_guests.yml           # Virtual machines variables
 ```
 
-## `hosts` - cluster topology
+##  Cluster topology - `hosts`
 
 This file contains the list of cluster's hosts, organized in **hosts groups**:
 
@@ -60,7 +60,7 @@ all:
             k8s-test-worker-02.dt.ept.lu:
 ```
 
-## `group_vars/vmware_guests.yml` - VMWare virtual machines
+## VMWare virtual machines - `group_vars/vmware_guests.yml`
 
 > You can omit this section if you are not deploying on VMWare.
 
@@ -68,6 +68,6 @@ This file contains the common hosts configuration to create and configure the cl
 
 The variables defined here are used nearly exclusively by the [`vmware_guest`](https://git.dt.ept.lu/ict-infra/iac/ansible/roles/vmware_guest) Ansible role. Please refer to [this documentation](https://git.dt.ept.lu/ict-infra/iac/ansible/roles/vmware_guest/-/blob/master/README.md) for more details.
 
-## `group_vars/k8s.yml` - K8S clusters
+## K8S clusters - `group_vars/k8s.yml`
 
 This file contains the K8S cluster configuration and the various cluster components configuration.

@@ -64,7 +64,8 @@ ansible-playbook \
 
 ## Create a Keepalived cluster
 
-> This step is optional if you use an alternative way to provide HA to the K8S masters node & API  (e.g. HTTP load balancer like nginx).
+> This step is optional if you use an alternative way to provide HA to the K8S
+masters node & API  (e.g. HTTP load balancer like nginx).
 
 | Key              | Value                      |
 |------------------|----------------------------|
@@ -111,7 +112,8 @@ ansible-playbook \
 
 ## Configure a Kubernetes cluster
 
-This step will configure a K8S cluster. You can (and should) run it on a schedule to ensure the cluster is kept up to date.
+This step will configure a K8S cluster. You can (and should) run it on a
+schedule to ensure the cluster is kept up to date.
 
 | Key              | Value                |
 |------------------|----------------------|
