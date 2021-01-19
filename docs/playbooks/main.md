@@ -22,6 +22,7 @@ You can avoid setting-up the cluster by running the playbook with only the
 ## Roles
 
 Roles included by default:
+
 | Role          | Description           |
 |---------------|-----------------------|
 | `docker_base` | Docker runtime        |

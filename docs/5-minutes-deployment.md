@@ -2,7 +2,7 @@
 
 This document will guide you in the deployment of a production-ready Kubernetes clusters in less than 5 minutes.
 
-It assumes you have a wrote or generated a K8S inventory, as explained in [the inventory documentation](Inventory.md).
+It assumes you have a wrote or generated a K8S inventory, as explained in [the inventory documentation](inventory.md).
 
 ## Create and configure the virtual machines
 
