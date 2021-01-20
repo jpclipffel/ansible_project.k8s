@@ -1,6 +1,5 @@
 # code: language=Ansible insertSpaces=true tabSize=2
-
-
+#
 # Kubernetes - Ceph
 # Setup a Ceph StorageClass on a Kubernetes cluster.
 
@@ -22,8 +21,8 @@
 
     - name: Set Ceph cluster facts
       set_fact:
-        ceph_client_k8s_key: "{{ hostvars[item]._key.stdout | default('') }}"
-        ceph_client_k8s_cid: "{{ hostvars[item]._cid.stdout | default('') }}"
+        ceph_client_k8s_key: "{{ hostvars[item].ceph_client_k8s_key | default('') }}"
+        ceph_client_k8s_cid: "{{ hostvars[item].ceph_client_k8s_cid | default('') }}"
       when:
         - inventory_hostname not in groups['ceph_mons']
         - item in groups['ceph_mons']
@@ -49,7 +48,7 @@
     - include_tasks:
         file: helpers/inventory.yml
         apply: { tags: [ always ] }
-      tags: [never, apply]
+      tags: [always]
 
 
     # Set the list of Ceph monitors from a commas-separated string.
@@ -64,4 +63,4 @@
 
     - include_role:
         role: ceph_client_k8s
-      tags: [never, apply]
+      tags: [never, apply, delete]
