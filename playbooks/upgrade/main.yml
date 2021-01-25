@@ -1,0 +1,116 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+#
+# K8S - upgrade
+# Upgrade a Kubernetes cluster.
+
+
+- name: Common
+  hosts:
+    - k8s_masters
+    - k8s_workers
+
+  tasks:
+
+    - include_tasks:
+        file: ../helpers/inventory.yml
+        apply: { tags: [ always ] }
+      tags: [always]
+
+
+    - name: Prerun assertions
+      assert:
+        that:
+          - k8s_node_type is defined and k8s_node_type in [ "master", "worker" ]
+          - k8s_control_plane_endpoint is defined
+          - k8s_next_version is defined
+      tags: [always]
+
+
+    - name: Identify next K8S version
+      shell: >
+        apt-cache madison kubeadm
+        | grep '{{ k8s_next_version }}'
+        | head -n 1
+        | cut -d '|' -f 2
+        | sed 's/ //g'
+      register: _kube_version_apt
+      tags: [always]
+
+
+    - name: Set next K8S version facts
+      set_fact:
+        kube_version_apt: "{{ _kube_version_apt.stdout }}"
+        kube_version: "{{ _kube_version_apt.stdout.split('-')[0] }}"
+      tags: [always]
+
+
+    - name: Runtime assertions
+      assert:
+        that:
+          - kube_version_apt | default('') | length > 0
+          - kube_version | default('') | length > 0
+          - kube_version_apt != kube_version
+      tags: [always]
+
+
+    - name: Review
+      debug:
+        msg:
+          - kube_version_apt: "{{ _kube_version_apt.stdout }}"
+          - kube_version: "{{ _kube_version_apt.stdout.split('-')[0] }}"
+      tags: [always]
+    
+
+    - name: Ready
+      debug:
+        msg:
+          - Ready to start the upgrade.
+      tags: [always]
+
+
+    - name: Update APT cache
+      shell: >
+        apt-get update
+      tags: [never, primary, masters, workers]
+
+
+- name: Primary master node
+  hosts:
+    - k8s_masters
+  tasks:
+    - name: Upgrade kubeadm on primary master node
+      include_tasks:
+        file: primary.yml
+        apply: { tags: [always] }
+      when:
+        - inventory_hostname == k8s_primary_master_name
+      tags: [never, primary]
+
+
+- name: Master nodes
+  serial: 1
+  hosts:
+    - k8s_masters
+  tasks:
+    - name: Upgrade master nodes
+      include_tasks:
+        file: masters.yml
+        apply: { tags: [always] }
+      when:
+        - k8s_node_type == "master"
+      tags: [never, masters]
+
+
+- name: Worker nodes
+  serial: 1
+  hosts:
+    - k8s_masters
+    - k8s_workers
+  tasks:
+    - name: Upgrade worker nodes
+      include_tasks:
+        file: workers.yml
+        apply: { tags: [always] }
+      when:
+        - k8s_node_type == "worker"
+      tags: [never, workers]

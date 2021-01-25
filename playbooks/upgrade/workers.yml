@@ -1,0 +1,53 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+
+
+- name: Upgrade kubeadm
+  shell: >
+    apt-get install -y --allow-change-held-packages
+    kubeadm={{ kube_version_apt }}
+
+
+- name: Upgrade node manifests
+  shell: >
+    kubeadm upgrade node
+
+
+- name: Prepare drain command
+  shell: >
+    echo $(hostname)
+  register: _kubectl_drain_hostname
+
+
+- name: Drain (cordon) node
+  shell: >
+    kubectl drain {{ _kubectl_drain_hostname.stdout }} --disable-eviction --delete-local-data --ignore-daemonsets
+  delegate_to: "{{ k8s_primary_master_name }}"
+
+
+- name: Upgrade kubelet and kubectl
+  shell: >
+    apt-get install -y --allow-change-held-packages
+    kubelet={{ kube_version_apt }}
+    kubectl={{ kube_version_apt }}
+
+
+- name: Restart kubelet
+  shell: >
+    systemctl daemon-reload; systemctl restart kubelet
+
+
+- name: Uncordon (undrain) node
+  shell: >
+    kubectl uncordon {{ _kubectl_drain_hostname.stdout }}
+  delegate_to: "{{ k8s_primary_master_name }}"
+
+
+- name: Let the node start peacefully
+  wait_for:
+    timeout: 60
+
+
+- name: Done
+  debug:
+    msg:
+      - Kubernetes upgraded on worker node {{ inventory_hostname }}.

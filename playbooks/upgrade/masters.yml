@@ -1,0 +1,57 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+
+
+- name: Upgrade kubeadm
+  shell: >
+    apt-get install -y --allow-change-held-packages
+    kubeadm={{ kube_version_apt }}
+  when:
+    - inventory_hostname != k8s_primary_master_name
+
+
+- name: Upgrade node manifests
+  shell: >
+    kubeadm upgrade node
+  when:
+    - inventory_hostname != k8s_primary_master_name
+
+
+- name: Drain (cordon) master node
+  shell: >
+    kubectl drain $(hostname) --ignore-daemonsets 
+
+
+- name: Upgrade kubelet and kubectl
+  shell: >
+    apt-get install -y --allow-change-held-packages
+    kubelet={{ kube_version_apt }}
+    kubectl={{ kube_version_apt }}
+
+
+- name: Restart kubelet
+  shell: >
+    systemctl daemon-reload; systemctl restart kubelet
+
+
+- name: Wait for Kubernetes API server to respond
+  wait_for:
+    port: 6443
+    delay: 10
+    timeout: 120
+
+
+- name: Uncordon (undrain) node
+  shell: >
+    kubectl uncordon $(hostname)
+
+
+- name: Let the node start peacefully
+  wait_for:
+    timeout: 60
+
+
+- name: Ready to continue
+  debug:
+    msg:
+      - Kubernetes upgraded on master node {{ inventory_hostname }}.
+      - Please relaunch the playbook with tags 'workers' to upgrade the worker nodes.
