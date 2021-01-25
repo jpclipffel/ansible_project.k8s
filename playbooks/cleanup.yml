@@ -1,3 +1,8 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+#
+# K8S - Cleanup
+# Remove nodes from a Kubernetes cluster.
+
 - hosts:
     - k8s_masters
     - k8s_deleted

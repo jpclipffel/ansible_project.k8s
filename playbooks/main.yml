@@ -1,6 +1,5 @@
 # code: language=Ansible insertSpaces=true tabSize=2
-
-
+#
 # K8S - Main
 # Builds, scales and configures a Kubernetes cluster.
 
