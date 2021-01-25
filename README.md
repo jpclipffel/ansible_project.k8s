@@ -33,6 +33,7 @@ This project provides several playbooks.
 | `playbooks/gitlab.yml`             | Add a Kubernetes cluster to a GitLab group or project. | Yes           | [Link](docs/playbooks/gitlab.md)  |
 | `playbooks/restart.yml`            | Restart a Kubernetes cluster.                          | Yes           | [Link](docs/playbooks/restart.md) |
 | `playbooks/cleanup.yml`            | Remove one or more nodes from a Kubernetes cluster.    | No            | [Link](docs/playbooks/cleanup.md) |
+| `playbooks/upgrade/`               | Upgrade a Kubernetes cluster.                          | No            | [Link](docs/playbooks/upgrade.md) |
 
 ---
 
