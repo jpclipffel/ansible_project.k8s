@@ -18,7 +18,7 @@
 
 - name: Drain (cordon) master node
   shell: >
-    kubectl drain $(hostname) --ignore-daemonsets 
+    kubectl drain $(hostname) --ignore-daemonsets --delete-local-data
 
 
 - name: Upgrade kubelet and kubectl
