@@ -61,18 +61,21 @@
       when: "'k8s_calico' in k8s_roles"
       tags: [ never, apply, delete ]
 
-    - include_role: { name: 'k8s_cpi-vsphere' }
-      when: "'k8s_cpi-vsphere' in k8s_roles"
-      tags: [ never, apply, delete ]
+    # - include_role: { name: 'k8s_cpi-vsphere' }
+    #   when: "'k8s_cpi-vsphere' in k8s_roles"
+    #   tags: [ never, apply, delete ]
 
+    # TO REMOVE !
     - include_role: { name: 'k8s_csi-rbd' }
       when: "'k8s_csi-rbd' in k8s_roles"
       tags: [ never, apply, delete ]
 
+    # TO REMOVE !
     - include_role: { name: 'k8s_volsnap' }
       when: "'k8s_volsnap' in k8s_roles"
       tags: [ never, apply, delete ]
 
+    # TO REMOVE !
     - include_role: { name: 'k8s_metrics-server' }
       when: "'k8s_metrics-server' in k8s_roles"
       tags: [ never, apply, delete ]
@@ -81,14 +84,17 @@
       when: "'k8s_metallb' in k8s_roles"
       tags: [ never, apply, delete ]
 
+    # TO REMOVE !
     - include_role: { name: 'k8s_istio' }
       when: "'k8s_istio' in k8s_roles"
       tags: [ never, apply, delete ]
 
+    # TO REMOVE !
     - include_role: { name: 'k8s_prometheus' }
       when: "'k8s_prometheus' in k8s_roles"
       tags: [ never, apply, delete, debug ]
 
+    # TO REMOVE !
     - include_role: { name: 'k8s_argocd' }
       when: "'k8s_argocd' in k8s_roles"
       tags: [ never, apply, delete, debug ]

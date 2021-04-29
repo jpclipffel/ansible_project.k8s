@@ -10,46 +10,46 @@
   version: master
   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_cpi-vsphere
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_cpi-vsphere
+#   version: master
+#   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_csi-rbd
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_csi-rbd
+#   version: master
+#   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_volsnap
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_volsnap
+#   version: master
+#   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_metrics-server
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_metrics-server
+#   version: master
+#   scm: git
 
 - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_metallb
   version: master
   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_istio
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_istio
+#   version: master
+#   scm: git
 
 - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_gitlab
   version: master
   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_helm
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_helm
+#   version: master
+#   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_prometheus
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_prometheus
+#   version: master
+#   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_argocd
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/k8s_argocd
+#   version: master
+#   scm: git
 
-- src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/ceph_client_k8s
-  version: master
-  scm: git
+# - src: git+https://git.dt.ept.lu/ict-infra/iac/ansible/roles/ceph_client_k8s
+#   version: master
+#   scm: git
