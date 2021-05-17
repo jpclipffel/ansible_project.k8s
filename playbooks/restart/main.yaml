@@ -1,0 +1,54 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+#
+# K8S - Restart
+# Restart a Kubernetes cluster.
+
+
+- name: Common
+  hosts:
+    - k8s_masters
+    - k8s_workers
+
+  tasks:
+
+    - include_tasks:
+        file: ../helpers/inventory.yml
+        apply: { tags: [ always ] }
+      tags: [always]
+
+
+    - name: Prerun assertions
+      assert:
+        that:
+          - k8s_node_type is defined and k8s_node_type in [ "master", "worker" ]
+          - k8s_control_plane_endpoint is defined
+      tags: [always]
+
+
+- name: Master nodes
+  serial: 1
+  hosts:
+    - k8s_masters
+  tasks:
+    - name: Restart master nodes
+      include_tasks:
+        file: masters.yaml
+        apply: { tags: [always] }
+      when:
+        - k8s_node_type == "master"
+      tags: [never, all, masters]
+
+
+- name: Worker nodes
+  serial: 1
+  hosts:
+    - k8s_masters
+    - k8s_workers
+  tasks:
+    - name: Restart worker nodes
+      include_tasks:
+        file: workers.yaml
+        apply: { tags: [always] }
+      when:
+        - k8s_node_type == "worker"
+      tags: [never, all, workers]

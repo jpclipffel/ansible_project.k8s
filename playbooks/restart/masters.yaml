@@ -1,0 +1,35 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+
+
+- name: Drain (cordon) master node
+  shell: >
+    kubectl drain $(hostname) --ignore-daemonsets --delete-local-data
+
+
+- name: Restart kubelet
+  shell: >
+    systemctl daemon-reload; systemctl restart kubelet
+
+
+- name: Wait for Kubernetes API server to respond
+  wait_for:
+    port: 6443
+    delay: 10
+    timeout: 120
+
+
+- name: Uncordon (undrain) node
+  shell: >
+    kubectl uncordon $(hostname)
+
+
+- name: Let the node start peacefully
+  wait_for:
+    timeout: 60
+
+
+- name: Ready to continue
+  debug:
+    msg:
+      - Kubernetes restarted on master node {{ inventory_hostname }}.
+

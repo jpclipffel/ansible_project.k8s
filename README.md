@@ -26,14 +26,19 @@ Whats happening at the ecosystem level is out of scope of this project.
 
 This project provides several playbooks.
 
-| Playbook                           | Description                                            | Ready for AWX | Documentation                     |
-|------------------------------------|--------------------------------------------------------|---------------|-----------------------------------|
-| `playbooks/main.yml`               | Builds, scales and configures a Kubernetes cluster.    | Yes           | [Link](docs/playbooks/main.md)    |
-| `playbooks/ceph.yml`               | Setup a Ceph `StorageClass` on a Kubernetes cluster.   | Yes           | [Link](docs/playbooks/ceph.md)    |
-| `playbooks/gitlab.yml`             | Add a Kubernetes cluster to a GitLab group or project. | Yes           | [Link](docs/playbooks/gitlab.md)  |
-| `playbooks/restart.yml`            | Restart a Kubernetes cluster.                          | Yes           | [Link](docs/playbooks/restart.md) |
-| `playbooks/cleanup.yml`            | Remove one or more nodes from a Kubernetes cluster.    | No            | [Link](docs/playbooks/cleanup.md) |
-| `playbooks/upgrade/`               | Upgrade a Kubernetes cluster.                          | No            | [Link](docs/playbooks/upgrade.md) |
+| Playbook                | Description                                           | Ready for AWX | Documentation                     |
+|-------------------------|-------------------------------------------------------|---------------|-----------------------------------|
+| `playbooks/main.yml`    | Builds, scales and configures a Kubernetes cluster    | Yes           | [Link](docs/playbooks/main.md)    |
+| `playbooks/gitlab.yml`  | Add a Kubernetes cluster to a GitLab group or project | Yes           | [Link](docs/playbooks/gitlab.md)  |
+| `playbooks/restart/`    | Restart a Kubernetes cluster                          | Yes           | [Link](docs/playbooks/restart.md) |
+| `playbooks/cleanup.yml` | Remove one or more nodes from a Kubernetes cluster    | No            | [Link](docs/playbooks/cleanup.md) |
+| `playbooks/upgrade/`    | Upgrade a Kubernetes cluster                          | No            | [Link](docs/playbooks/upgrade.md) |
+
+Deprecated playbooks:
+
+| Playbook                | Description                                           | Ready for AWX | Documentation                     |
+|-------------------------|-------------------------------------------------------|---------------|-----------------------------------|
+| `playbooks/ceph.yml`    | Setup a Ceph `StorageClass` on a Kubernetes cluster   | Yes           | [Link](docs/playbooks/ceph.md)    |
 
 ---
 

@@ -1,0 +1,35 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+
+
+- name: Prepare drain command
+  shell: >
+    echo $(hostname)
+  register: _kubectl_drain_hostname
+
+
+- name: Drain (cordon) node
+  shell: >
+    kubectl drain {{ _kubectl_drain_hostname.stdout }} --disable-eviction --delete-local-data --ignore-daemonsets
+  delegate_to: "{{ k8s_primary_master_name }}"
+
+
+- name: Restart kubelet
+  shell: >
+    systemctl daemon-reload; systemctl restart kubelet
+
+
+- name: Uncordon (undrain) node
+  shell: >
+    kubectl uncordon {{ _kubectl_drain_hostname.stdout }}
+  delegate_to: "{{ k8s_primary_master_name }}"
+
+
+- name: Let the node start peacefully
+  wait_for:
+    timeout: 60
+
+
+- name: Done
+  debug:
+    msg:
+      - Kubernetes restarted on worker node {{ inventory_hostname }}.
