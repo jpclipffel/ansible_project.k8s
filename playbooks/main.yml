@@ -1,4 +1,4 @@
-# code: language=Ansible insertSpaces=true tabSize=2
+# code: language="jinja-yaml" insertSpaces=true tabSize=2
 #
 # K8S - Main
 # Builds, scales and configures a Kubernetes cluster.
@@ -31,8 +31,15 @@
 
     - name: Configure container runtime
       include_role:
-        name: docker_base
+        # name: docker_base
+        name: "{{ k8s_cri_role | default('docker_base') }}"
       tags: [never, setup, teardown]
+    
+
+    - name: Wait for container runtime to properly restart
+      wait_for:
+        timeout: 60
+      tags: [never, setup]
 
 
     - name: Set facts from playbook variables
