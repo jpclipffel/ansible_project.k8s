@@ -1,4 +1,4 @@
-# code: language="jinja-yaml" insertSpaces=true tabSize=2
+# code: language=Ansible insertSpaces=true tabSize=2
 #
 # K8S - Main
 # Builds, scales and configures a Kubernetes cluster.
@@ -11,9 +11,9 @@
 
     - include_tasks:
         file: helpers/inventory.yml
-        apply: { tags: [ always ] }
+        apply:
+          tags: [always]
       tags: [always]
-
 
     - name: Inventory assertions
       assert:
@@ -21,90 +21,92 @@
           - k8s_node_type is defined and k8s_node_type in [ "master", "worker" ]
       tags: [always]
 
-
     - name: Setup assertions
       assert:
         that:
           - k8s_control_plane_endpoint is defined
       tags: [setup]
 
+    # --- CRI ---
 
     - name: Configure container runtime
       include_role:
-        # name: docker_base
         name: "{{ k8s_cri_role | default('docker_base') }}"
       tags: [never, setup, teardown]
-    
 
     - name: Wait for container runtime to properly restart
       wait_for:
         timeout: 60
       tags: [never, setup]
 
+    # --- K8S ---
 
     - name: Set facts from playbook variables
       set_fact:
         k8s_base_node_type: "{{ k8s_node_type }}"
         k8s_base_control_plane_endpoint: "{{ k8s_control_plane_endpoint | default('-') }}"
         k8s_mesh_node_type: "{{ k8s_node_type }}"
-      tags:
-        - always
-
+      tags: [always]
 
     - name: Configure Kubernetes
       include_role:
         name: k8s_base
       tags: [never, stats, setup, teardown]
 
+    # --- K8S components ---
 
-    - name: Configure Helm
+    - name: Configure Calico
       include_role:
-        name: 'k8s_helm'
-      tags: [never, setup, remove]
-
-
-    # === Clusters components ===
-    - include_role: { name: 'k8s_calico' }
+        name: 'k8s_calico'
       when: "'k8s_calico' in k8s_roles"
-      tags: [ never, apply, delete ]
+      tags: [never, apply, delete]
 
+    - name: Configure MetalLB
+      include_role:
+        name: 'k8s_metallb'
+      when: "'k8s_metallb' in k8s_roles"
+      tags: [never, apply, delete]
+
+    # # TO REMOVE !
+    # - name: Configure Helm
+    #   include_role:
+    #     name: 'k8s_helm'
+    #   tags: [never, setup, remove]
+
+    # # TO REMOVE !
     # - include_role: { name: 'k8s_cpi-vsphere' }
     #   when: "'k8s_cpi-vsphere' in k8s_roles"
     #   tags: [ never, apply, delete ]
 
-    # TO REMOVE !
-    - include_role: { name: 'k8s_csi-rbd' }
-      when: "'k8s_csi-rbd' in k8s_roles"
-      tags: [ never, apply, delete ]
+    # # TO REMOVE !
+    # - include_role: { name: 'k8s_csi-rbd' }
+    #   when: "'k8s_csi-rbd' in k8s_roles"
+    #   tags: [ never, apply, delete ]
 
-    # TO REMOVE !
-    - include_role: { name: 'k8s_volsnap' }
-      when: "'k8s_volsnap' in k8s_roles"
-      tags: [ never, apply, delete ]
+    # # TO REMOVE !
+    # - include_role: { name: 'k8s_volsnap' }
+    #   when: "'k8s_volsnap' in k8s_roles"
+    #   tags: [ never, apply, delete ]
 
-    # TO REMOVE !
-    - include_role: { name: 'k8s_metrics-server' }
-      when: "'k8s_metrics-server' in k8s_roles"
-      tags: [ never, apply, delete ]
+    # # TO REMOVE !
+    # - include_role: { name: 'k8s_metrics-server' }
+    #   when: "'k8s_metrics-server' in k8s_roles"
+    #   tags: [ never, apply, delete ]
 
-    - include_role: { name: 'k8s_metallb' }
-      when: "'k8s_metallb' in k8s_roles"
-      tags: [ never, apply, delete ]
+    # # TO REMOVE !
+    # - include_role: { name: 'k8s_istio' }
+    #   when: "'k8s_istio' in k8s_roles"
+    #   tags: [ never, apply, delete ]
 
-    # TO REMOVE !
-    - include_role: { name: 'k8s_istio' }
-      when: "'k8s_istio' in k8s_roles"
-      tags: [ never, apply, delete ]
+    # # TO REMOVE !
+    # - include_role: { name: 'k8s_prometheus' }
+    #   when: "'k8s_prometheus' in k8s_roles"
+    #   tags: [ never, apply, delete, debug ]
 
-    # TO REMOVE !
-    - include_role: { name: 'k8s_prometheus' }
-      when: "'k8s_prometheus' in k8s_roles"
-      tags: [ never, apply, delete, debug ]
-
-    # TO REMOVE !
-    - include_role: { name: 'k8s_argocd' }
-      when: "'k8s_argocd' in k8s_roles"
-      tags: [ never, apply, delete, debug ]
+    # # TO REMOVE !
+    # - include_role: { name: 'k8s_argocd' }
+    #   when: "'k8s_argocd' in k8s_roles"
+    #   tags: [ never, apply, delete, debug ]
 
 
     # === External integration ===
@@ -113,6 +115,6 @@
     #   when: "'ceph_client_k8s' in k8s_roles"
     #   tags: [ never, apply, delete ]
 
-    - include_role: { name: 'k8s_gitlab' }
-      when: "'k8s_gitlab' in k8s_roles"
-      tags: [ never, apply, delete ]
+    # - include_role: { name: 'k8s_gitlab' }
+    #   when: "'k8s_gitlab' in k8s_roles"
+    #   tags: [ never, apply, delete ]
