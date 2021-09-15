@@ -1,0 +1,119 @@
+# code: language=YAML insertSpaces=true tabSize=2
+
+all:
+  children:
+    # Kubernetes cluster
+    # Reference: group_vars/k8s.yml
+    k8s:
+      children:
+        k8s_masters:
+          hosts:
+            awx-master-01.dt.ept.lu:
+        k8s_workers:
+          hosts:
+            awx-worker-01.dt.ept.lu:
+            awx-worker-02.dt.ept.lu:
+    # Ceph monitors
+    ceph_mons:
+      children:
+        mons:
+    # AWX cluster
+    # Reference: group_vars/awx_cluster.yml
+    awx_cluster:
+      hosts:
+        awx-master-01.dt.ept.lu:
+    # ArgoCD cluster
+    # Reference: group_vars/argocd_cluster.yml
+    argocd_cluster:
+      hosts:
+        awx-master-01.dt.ept.lu:
+    # Backup hosts
+    backup_servers:
+      hosts:
+        ict-backup-01.dt.ept.lu:
+          ansible_user: ansctl
+          ansible_become: true
+
+
+# Previous inventory definition
+# ---
+# all:
+#     vars:
+#       ansible_user: ansctl
+#     children:
+#       awx_prod:
+#         vars:
+#           # Ansible
+#           ansible_become: yes
+#           ansible_python_interpreter: 'python3'
+#           # Infra :: Keepalived
+#           infra_keepalived_instances:
+#             - name: 'k8s_vip'
+#               auth:
+#                 pass: '1234'
+#               peers: []
+#               vips:
+#                 - '172.29.252.54'
+#               script: check_k8s
+#           infra_keepalived_scripts:
+#             - name: check_k8s
+#           # K8S :: Cluster
+#           k8s_base_version: "1.18.0-00"
+#           k8s_control_plane_endpoint: "awx-master-01.dt.ept.lu"
+#           # K8S :: Roles
+#           k8s_roles:
+#             - k8s_calico
+#             - k8s_istio
+#           # K8S :: Istio
+#           k8s_istio_version: "1.5.2"
+#           k8s_istio_tls_crt: /usr/local/share/ca-certificates/wildcard.dt.ept.lu.crt
+#           k8s_istio_tls_key: /etc/ssl/private/wildcard.dt.ept.lu.key
+#           k8s_istio_sidecar_namespaces: [ default, awx, nifi]
+#           k8s_istio_ingressgw_custom: "ingressgw-daemonset"
+#           k8s_istio_ingressgw_ports:
+#             # HTTP
+#             - containerPort: 80
+#               hostPort: 80
+#               protocol: TCP
+#               name: http2
+#             # HTTPS
+#             - containerPort: 443
+#               hostPort: 443
+#               protocol: TCP
+#               name: https
+#           # Ceph :: Client :: K8S
+#           ceph_client_k8s_user: "admin"
+#           ceph_client_k8s_pool: "awx_prod"
+#           ceph_client_k8s_provider: "rbd"
+#           # ---
+#         children:
+#           masters:
+#             hosts:
+#               awx-master-01.dt.ept.lu:
+#           workers:
+#             hosts:
+#               awx-worker-01.dt.ept.lu:
+#               awx-worker-02.dt.ept.lu:
+#           ceph_mons:
+#             hosts:
+#               ceph-k8s-01.dt.ept.lu:
+#               ceph-k8s-02.dt.ept.lu:
+#               ceph-k8s-03.dt.ept.lu:
+#           awx_clusters:
+#             vars:
+#               awx_version: "11.1.0"
+#               awx_inventory: "/tmp/awx-inventory"
+#               awx_repository: "/tmp/awx"
+#               awx_sidecar: "awx.istio.yml.j2"
+#               awx_namespace: "awx"
+#               awx_storageclass: "rbd-sc"
+#               awx_ingressgateway: "istio-ingressgateway"
+#               awx_gateway: "awx-gw"
+#               awx_gateway_hosts:
+#                 - "awx.dt.ept.lu"
+#                 - "awx-worker-01.dt.ept.lu"
+#                 - "awx-worker-02.dt.ept.lu"
+#               awx_virtualservice: "awx-vs"
+#               awx_database: "awx"
+#             hosts:
+#               awx-master-01.dt.ept.lu:

@@ -1,0 +1,69 @@
+# Ansible
+ansible_user: ansctl
+ansible_become: true
+ansible_python_interpreter: 'python3'
+
+# AWX CRD operator
+# Theses variables are used to deploy the AWX operator (>= 18.x)
+# Operator version mapping with AWX version:
+# * 0.7.0     =>  18.x
+# * 0.9.0-1   =>  19.1
+# * 0.11.0    =>  19.2
+awx_operator_version: 0.11.0
+
+# AWX CRD configuration
+# Theses variables are used to deploy the AWX instance (>= 18.x) with the AWX
+# operator.
+awx_resourcename: awx
+awx_namespace: awx
+awx_admin_password: password
+awx_spec:
+  create_preload_data: true
+  replicas: 2
+  bundle_cacert_secret: ptech.lu
+
+awx_old_psql:
+  old_postgres_configuration_secret: "{{ awx_resourcename + '-old-postgres-configuration' }}"
+
+# ---
+
+# Docker image
+dockerhub_base: ansible
+
+# Kubernetes cluster
+kubernetes_context: kubernetes-admin@kubernetes
+kubernetes_namespace: awx
+
+# PostgreSQL database
+pg_hostname: postgresql-postgresql-ha-pgpool.awx.svc.cluster.local
+pg_username: postgres
+pg_password: password
+pg_database: awx
+pg_port: 5432
+
+# AWX variables
+# Those variables are used by the playbook deployment (<= 17.x)
+admin_user: admin
+admin_password: password
+create_preload_data: false
+secret_key: awxsecret
+host_port: 80
+custom_venvs:
+  - name: devops
+    python: python3
+    python_ansible_version: 2.9.5
+    python_modules:
+      - hvac
+  - name: storage-management
+    python: python3
+    python_ansible_version: 2.10.0
+    python_modules:
+      - dellemc-unity-sdk
+      - hpe3par-sdk
+      - PyU4V
+      - storops
+  - name: foobar
+    python: python3
+    python_ansible_version: 2.9.5
+    python_modules:
+      - hvac

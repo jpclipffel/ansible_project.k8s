@@ -1,0 +1,53 @@
+# Ansible
+ansible_become: yes
+ansible_python_interpreter: 'python3'
+
+# Infra :: Main
+system_base_use_resolved: no
+
+# Infra :: Monitoring
+zabbix_agent_server_host: 172.29.249.203
+zabbix_agent_server_register: no
+
+# Infra :: Keepalived
+keepalived_base_instances:
+  - name: 'k8s_vip'
+    interface: ens160
+    auth:
+      pass: '1234'
+    peers: []
+    vips:
+      - '172.29.252.195'
+    script: check_k8s
+# infra_keepalived_scripts:
+keepalived_base_scripts:
+  - name: check_k8s
+
+# Docker
+docker_base_insecure_registries:
+  - hbr.dt.ept.lu
+
+# K8S :: Cluster
+k8s_control_plane_endpoint: "k8s-test.dt.ept.lu"
+k8s_base_version: "1.20.2-00"
+
+# K8S :: Ceph
+ceph_client_k8s_pool: k8s_test
+
+# K8S :: Roles
+k8s_roles:
+  - k8s_calico
+  # - k8s_cpi-vsphere
+  # - k8s_csi-rbd
+  # - k8s_volsnap
+  # - k8s_metrics-server
+  - k8s_metallb
+  # - k8s_istio
+  # - k8s_prometheus
+
+# K8S :: MetalLB
+k8s_metallb_pools:
+  - name: default
+    protocol: layer2
+    addresses: [ "172.29.252.180/32" ]
+

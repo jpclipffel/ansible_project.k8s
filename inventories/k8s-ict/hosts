@@ -1,0 +1,26 @@
+# code: language=YAML insertSpaces=true tabSize=2
+
+all:
+  children:
+    # Kubernetes cluster
+    # Reference: group_vars/k8s.yaml
+    k8s:
+      children:
+        k8s_masters:
+          hosts:
+            k8s-ict-master-01.dt.ept.lu:
+            k8s-ict-master-02.dt.ept.lu:
+            k8s-ict-master-03.dt.ept.lu:
+        k8s_workers:
+          hosts:
+            k8s-ict-worker-01.dt.ept.lu:
+            k8s-ict-worker-02.dt.ept.lu:
+            k8s-ict-worker-03.dt.ept.lu:
+            k8s-ict-worker-04.dt.ept.lu:
+            k8s-ict-worker-05.dt.ept.lu:
+            k8s-ict-worker-06.dt.ept.lu:
+            # Future scaling
+            # k8s-ict-worker-07.dt.ept.lu:
+            # k8s-ict-worker-08.dt.ept.lu:
+            # k8s-ict-worker-09.dt.ept.lu:
+            # k8s-ict-worker-10.dt.ept.lu:

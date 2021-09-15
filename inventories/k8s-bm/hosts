@@ -1,0 +1,12 @@
+# code: language=YAML insertSpaces=true tabSize=2
+
+all:
+  children:
+    # Kubernetes cluster
+    # Reference: group_vars/k8s.yml
+    k8s:
+      children:
+        k8s_masters:
+          hosts:
+            k8s-bm-master-01.dt.ept.lu:
+            k8s-bm-master-02.dt.ept.lu:

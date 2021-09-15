@@ -1,0 +1,50 @@
+# code: language=YAML insertSpaces=true tabSize=2
+
+all:
+  children:
+    # Virtual machines
+    # Reference: group_vars/vmware_guests.yml
+    vmware_guests:
+      hosts:
+        k8s-master-01.dt.ept.lu:
+          vmware_guest_name: "k8s-master-01"
+          vmware_guest_init_netplan_ip: "172.29.252.21/24"
+        k8s-master-02.dt.ept.lu:
+          vmware_guest_name: "k8s-master-02"
+          vmware_guest_init_netplan_ip: "172.29.252.32/24"
+        k8s-master-03.dt.ept.lu:
+          vmware_guest_name: "k8s-master-03"
+          vmware_guest_init_netplan_ip: "172.29.252.33/24"
+        k8s-worker-01.dt.ept.lu:
+          vmware_guest_name: "k8s-worker-01"
+          vmware_guest_init_netplan_ip: "172.29.252.34/24"
+        k8s-worker-02.dt.ept.lu:
+          vmware_guest_name: "k8s-worker-02"
+          vmware_guest_init_netplan_ip: "172.29.252.35/24"
+        k8s-worker-03.dt.ept.lu:
+          vmware_guest_name: "k8s-worker-03"
+          vmware_guest_init_netplan_ip: "172.29.252.36/24"
+        k8s-worker-04.dt.ept.lu:
+          vmware_guest_name: "k8s-worker-04"
+          vmware_guest_init_netplan_ip: "172.29.252.37/24"
+    # Kubernetes cluster
+    # Reference: group_vars/k8s.yml
+    k8s:
+      children:
+        k8s_masters:
+          hosts:
+            k8s-master-01.dt.ept.lu:
+            k8s-master-02.dt.ept.lu:
+            k8s-master-03.dt.ept.lu:
+        k8s_workers:
+          hosts:
+            k8s-worker-01.dt.ept.lu:
+            k8s-worker-02.dt.ept.lu:
+            k8s-worker-03.dt.ept.lu:
+            k8s-worker-04.dt.ept.lu:
+    # Ceph monitors
+    ceph_mons:
+      children:
+        mons:
+
+

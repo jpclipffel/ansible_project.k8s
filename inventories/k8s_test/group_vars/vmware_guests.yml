@@ -1,0 +1,30 @@
+# code: language=YAML insertSpaces=true tabSize=2
+
+# Location
+vmware_guest_hostname: "iaas-001-vcs01.vcloud"
+vmware_guest_datacenter: "iaas-001-datacenter"
+vmware_guest_resource_pool: "g.lo : DATI : ICT"
+vmware_guest_datastore: "DATI : ICT"
+vmware_guest_folder: "_root/DATI : ICT/ict-devops \U0001F923/projects \U0001F4BC/K8S - Test"
+vmware_guest_template: "ubuntu-20.04-bronze"
+
+# Networks
+vmware_guest_networks:
+  - name: "3027:ICT:DevOps"
+  - name: "3027:ICT:DevOps"
+
+# Setup
+# vmware_guest_init: [hostname, netplan, password, sudo]
+vmware_guest_init: [hostname, netplan, password, sudo]
+
+# Setup - Netplan
+vmware_guest_init_netplan:
+  network:
+    version: 2
+    ethernets:
+      ens160:
+        addresses: ["{{ vmware_guest_init_netplan_ip }}"]
+        gateway4: "172.29.252.1"
+        nameservers:
+          addresses: ["172.29.245.1"]
+          search: ["dt.ept.lu"]

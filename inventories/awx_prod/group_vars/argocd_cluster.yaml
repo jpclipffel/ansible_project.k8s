@@ -1,0 +1,2 @@
+argocd_namespace: "argocd"
+argocd_backup_directory: "/srv/avamar_backup/argocd_devops/"

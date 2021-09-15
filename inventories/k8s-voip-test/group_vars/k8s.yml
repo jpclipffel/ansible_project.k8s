@@ -1,0 +1,53 @@
+# Ansible
+ansible_become: yes
+ansible_python_interpreter: 'python3'
+
+# Infra :: Main
+system_base_use_resolved: no
+
+# Infra :: Monitoring
+zabbix_agent_server_host: 172.29.249.203
+zabbix_agent_server_register: no
+
+# Infra :: Keepalived
+keepalived_base_instances:
+  - name: 'k8s_vip'
+    interface: ens160
+    auth:
+      pass: '1234'
+    peers: []
+    vips:
+      - '192.168.110.10'
+    script: check_k8s
+keepalived_base_scripts:
+  - name: check_k8s
+
+# Docker
+docker_base_insecure_registries:
+  - hbr.dt.ept.lu
+
+# K8S :: Cluster
+k8s_control_plane_endpoint: "k8s-voip-test.dt.ept.lu"
+
+# K8S :: Roles
+k8s_roles:
+  - k8s_calico
+  - k8s_metrics-server
+  - k8s_metallb
+  - k8s_istio
+  - k8s_prometheus
+
+# K8S :: MetalLB
+k8s_metallb_pools:
+  - name: istio
+    protocol: layer2
+    addresses: [ "192.168.190.10/32" ]
+
+# K8S :: Istio
+k8s_istio_version: "1.5.2"
+k8s_istio_package_name: "istio-{{ k8s_istio_version }}-linux.tar.gz"
+k8s_istio_tls_crt: /usr/local/share/ca-certificates/wildcard.dt.ept.lu.crt
+k8s_istio_tls_key: /etc/ssl/private/wildcard.dt.ept.lu.key
+k8s_istio_sidecar_namespaces: [ "default" ]
+k8s_istio_ingressgw_annotations:
+  metallb.universe.tf/address-pool: istio

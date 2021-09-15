@@ -1,0 +1,37 @@
+# code: language=YAML insertSpaces=true tabSize=2
+
+all:
+  children:
+    # Virtual machines
+    # Reference: group_vars/vmware_guests.yml
+    vmware_guests:
+      hosts:
+        awx-test-master-01.dt.ept.lu:
+          vmware_guest_name: "awx-test-master-01"
+          vmware_guest_init_netplan_ip: "172.29.252.189/24"
+        awx-test-worker-01.dt.ept.lu:
+          vmware_guest_name: "awx-test-worker-01"
+          vmware_guest_init_netplan_ip: "172.29.252.190/24"
+        awx-test-worker-02.dt.ept.lu:
+          vmware_guest_name: "awx-test-worker-02"
+          vmware_guest_init_netplan_ip: "172.29.252.191/24"
+    # Kubernetes cluster
+    # Reference: group_vars/k8s.yml
+    k8s:
+      children:
+        k8s_masters:
+          hosts:
+            awx-test-master-01.dt.ept.lu:
+        k8s_workers:
+          hosts:
+            awx-test-worker-01.dt.ept.lu:
+            awx-test-worker-02.dt.ept.lu:
+    # Ceph monitors
+    ceph_mons:
+      children:
+        mons:
+    # AWX cluster
+    # Reference: group_vars/awx_cluster.yml
+    awx_cluster:
+      hosts:
+        awx-test-master-01.dt.ept.lu:

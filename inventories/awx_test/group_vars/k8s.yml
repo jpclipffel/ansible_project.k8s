@@ -1,0 +1,40 @@
+# code: language=Ansible insertSpaces=true tabSize=2
+
+# Ansible
+ansible_become: true
+ansible_python_interpreter: 'python3'
+
+# Infra :: Main
+# system_base_use_resolved: no
+
+# Infra :: Monitoring
+# zabbix_agent_server_host: 172.29.249.203
+zabbix_agent_server_register: false
+
+# Infra :: Keepalived
+keepalived_base_instances:
+  - name: 'k8s_vip'
+    auth:
+      pass: '1234'
+    peers: []
+    vips:
+      - '172.29.252.189'
+    script: check_k8s
+keepalived_base_scripts:
+  - name: check_k8s
+
+# K8S :: Cluster
+k8s_base_version: "1.19.7-00"
+k8s_control_plane_endpoint: "awx-test-k8s.dt.ept.lu"
+
+# K8S :: Roles
+k8s_roles:
+  - k8s_calico
+  - k8s_metallb
+
+# K8S :: MetalLB
+k8s_metallb_pools:
+  - name: default
+    protocol: layer2
+    auto-assign: false
+    addresses: ["172.29.252.182/32"]

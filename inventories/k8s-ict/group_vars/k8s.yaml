@@ -1,0 +1,76 @@
+# Ansible
+ansible_become: true
+ansible_python_interpreter: 'python3'
+
+# Infra :: Monitoring
+zabbix_agent_server_host: 172.29.249.203
+zabbix_agent_server_register: false
+
+# Infra :: Keepalived
+keepalived_base_instances:
+  - name: 'k8s_vip'
+    interface: ens192
+    auth:
+      pass: '1234'
+    peers: []
+    vips:
+      - '172.29.42.11'
+    script: check_k8s
+keepalived_base_scripts:
+  - name: check_k8s
+
+# Docker
+docker_base_insecure_registries:
+  - hbr.dt.ept.lu
+  - harbor-prod.dt.ept.lu
+  - harbor.ptech.lu
+
+# K8S :: Cluster
+k8s_control_plane_endpoint: "k8s-ict.dt.ept.lu"
+# k8s_control_plane_endpoint: "172.29.42.11"
+
+# K8S :: Version
+k8s_base_version: '1.20.6-00'
+
+# K8S :: Roles
+k8s_roles:
+  - k8s_calico
+  - k8s_metallb
+
+# K8S :: MetalLB :: BGP peers
+k8s_metallb_peers:
+  - peer-address: 172.29.42.2
+    peer-asn: 65000
+    my-asn: 64600
+
+# K8S :: MetalLB :: Pools
+k8s_metallb_pools:
+  # Cluster ingress
+  - name: ingress-prod
+    protocol: bgp
+    addresses: ["172.29.43.101/32"]
+  - name: ingress-test
+    protocol: bgp
+    addresses: ["172.29.43.102/32"]
+  # Harbor
+  - name: harbor-prod
+    protocol: bgp
+    addresses: ["172.29.43.103/32"]
+  - name: harbor-test
+    protocol: bgp
+    addresses: ["172.29.43.104/32"]
+  # Fat tony ELK
+  - name: fattony-prod
+    protocol: bgp
+    addresses: ["172.29.43.105/32"]
+  # Gitlab
+  - name: gitlab-prod
+    protocol: bgp
+    addresses: ["172.29.43.106/32"]
+  - name: gitlab-test
+    protocol: bgp
+    addresses: ["172.29.43.107/32"]
+  # Stash
+  - name: stash
+    protocol: bgp
+    addresses: ["172.29.43.111-172.29.42.200"]
